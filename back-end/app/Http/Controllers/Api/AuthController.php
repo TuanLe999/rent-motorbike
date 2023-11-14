@@ -6,10 +6,7 @@ use App\Mail\VerificationMail;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 
@@ -57,5 +54,40 @@ class AuthController extends Controller
             'message' => 'User Registered',
             'data' => ['user' => $user],
         ]);
+    }
+
+    // Register account
+    public function login(Request $request)
+    {
+        $data = $request->validate([
+            'email' => 'required|string|max:255|email',
+            'password' => 'required',
+        ]);
+
+        $user = User::where('email', $data['email'])->first();
+        
+        if($user && $user->exists())
+        {
+            if($user->email_verified_at == null)
+            {
+                return response()->json(['message' => 'Account has not been verified']);
+            }
+            else 
+            {
+                if(password_verify($data['password'], $user->password)) {
+                    return response()->json([
+                    'message' => 'Login successfully',
+                    'user' => $user
+                    ]);
+                }
+                else {
+                    return response()->json(['message' => 'Password wrong']);
+                }
+            }
+        }
+        else
+        {
+            return response()->json(['message' => 'Not found account']);
+        }
     }
 }

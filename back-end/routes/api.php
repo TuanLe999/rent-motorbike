@@ -4,8 +4,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\EmailVerificationController;
-use App\Http\Controllers\Api\NewPasswordController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -23,5 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::post('register', [AuthController::class, 'register']);
+
+Route::post('login', [AuthController::class, 'login']);
 
 Route::get('verify/{token}', [AuthController::class, 'verifyToken']);
