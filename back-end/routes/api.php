@@ -23,3 +23,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::post('register', [AuthController::class, 'register']);
+
+Route::get('verify/{token}', [AuthController::class, 'verifyToken']);
