@@ -66,14 +66,11 @@ class AuthController extends Controller
 
         $user = User::where('email', $data['email'])->first();
         
-        if($user && $user->exists())
-        {
-            if($user->email_verified_at == null)
-            {
+        if($user && $user->exists()) {
+            if($user->email_verified_at == null) {
                 return response()->json(['message' => 'Account has not been verified']);
-            }
-            else 
-            {
+            } 
+            else {
                 if(password_verify($data['password'], $user->password)) {
                     return response()->json([
                     'message' => 'Login successfully',
@@ -85,8 +82,7 @@ class AuthController extends Controller
                 }
             }
         }
-        else
-        {
+        else {
             return response()->json(['message' => 'Not found account']);
         }
     }
