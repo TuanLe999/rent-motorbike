@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\Api\ResetPasswordController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\ImageController;

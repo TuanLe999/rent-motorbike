@@ -36,6 +36,7 @@ class User extends Model
         'address',
         'gender',
         'avatar',
+        'verification_token',
     ];
 
     //List Motos was Rented by user
@@ -49,4 +50,23 @@ class User extends Model
     {
         return $this->hasMany(MotoRental::class, 'censor_id', 'user_id');
     }
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
 }
