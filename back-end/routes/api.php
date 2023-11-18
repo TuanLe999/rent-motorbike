@@ -1,5 +1,6 @@
 <?php
 
+
 use App\Http\Controllers\Api\ResetPasswordController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\ImageController;
@@ -46,4 +47,3 @@ Route::get('/test/hello',[TestAPIController::class, 'hello']);
 Route::get('/image',[ImageController::class, 'index']);
 
 Route::get('/moto',[MotoController::class, 'GetAllMoto']);
-
