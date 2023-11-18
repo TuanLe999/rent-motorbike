@@ -21,10 +21,6 @@ class User extends Model
     const STATUS_ACTIVE = 'Hoạt động';
     const STATUS_LOCKED = 'Khoá';
 
-    protected $table = 'users';
-
-    protected $primaryKey = 'user_id';
-
     protected $fillable = [
         'user_name',
         'password',
