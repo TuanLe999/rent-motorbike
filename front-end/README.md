@@ -51,15 +51,8 @@ In the project directory, you can run:
 ```bash
 npm install
 ```
-### Step 3: Access
 
-```bash
-https://github.com/Viet-Truong/backend_rentmoto.git
-```
-
-Clone project and follow the instructions in the readme file.
-
-### Step 4: Run project
+### Step 3: Run project
 
 ```bash
 npm start
