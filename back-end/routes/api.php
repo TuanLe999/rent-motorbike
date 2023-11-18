@@ -1,8 +1,8 @@
 <?php
 
+
 use App\Http\Controllers\Api\ResetPasswordController;
-use App\Models\User;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 
@@ -17,10 +17,6 @@ use App\Http\Controllers\Api\AuthController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 // Auth
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -29,4 +25,9 @@ Route::get('verify/{token}', [AuthController::class, 'verifyToken']);
 // Reset password
 Route::post('reset-password', [ResetPasswordController::class, 'sendMail']);
 Route::put('reset-password/{token}', [ResetPasswordController::class,'resetPassword']);
+
+// User
+Route::post('updateProfileUser', [UserController::class, 'updateProfileUser']);
+Route::post('lockAccount', [UserController::class,'lockAccount']);
+
 

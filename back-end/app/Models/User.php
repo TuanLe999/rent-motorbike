@@ -17,6 +17,9 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+
+    const STATUS_ACTIVE = 'Hoạt động';
+    const STATUS_LOCKED = 'Khoá';
     protected $fillable = [
         'email',
         'password',
