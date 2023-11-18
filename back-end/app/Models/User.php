@@ -8,9 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Model
 {
-    use HasFactory;
-
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
     protected $table = 'users';
 
     protected $primaryKey = 'user_id';
@@ -22,6 +20,10 @@ class User extends Model
 
     const STATUS_ACTIVE = 'Hoạt động';
     const STATUS_LOCKED = 'Khoá';
+
+    protected $table = 'users';
+
+    protected $primaryKey = 'user_id';
 
     protected $fillable = [
         'user_name',
@@ -60,8 +62,8 @@ class User extends Model
         'password',
         'remember_token',
     ];
-
-    /**
+  
+      /**
      * The attributes that should be cast.
      *
      * @var array<string, string>
@@ -69,4 +71,5 @@ class User extends Model
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
 }
