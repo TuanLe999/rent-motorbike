@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class User extends Authenticatable
+class User extends Model
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory;
 
+    use SoftDeletes;
+    protected $table = 'users';
+
+    protected $primaryKey = 'user_id';
     /**
      * The attributes that are mass assignable.
      *
@@ -20,37 +22,31 @@ class User extends Authenticatable
 
     const STATUS_ACTIVE = 'Hoạt động';
     const STATUS_LOCKED = 'Khoá';
+
     protected $fillable = [
-        'email',
+        'user_name',
         'password',
-        'name',
+        'email',
         'role',
         'status',
+        'fullname',
         'dob',
-        'cccd',
+        'card_id',
         'phone_number',
         'address',
         'gender',
         'avatar',
-        'verification_token',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    //List Motos was Rented by user
+    public function RentedMotos()
+    {
+        return $this->hasMany(MotoRental::class, 'customer_id', 'user_id');
+    }
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    //List Motos was Censored by user
+    public function CensoredMotos()
+    {
+        return $this->hasMany(MotoRental::class, 'censor_id', 'user_id');
+    }
 }

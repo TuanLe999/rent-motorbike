@@ -63,4 +63,9 @@ class UserController extends Controller
             'message' => 'Lock account user success',
         ]);
     }
+
+    public function getAllUsers(Request $request) 
+    {
+
+    }
 }
