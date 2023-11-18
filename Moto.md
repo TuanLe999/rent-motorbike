@@ -2,10 +2,10 @@
 
 ### GET_ALL_MOTORBIKE (CUSTOMER)
 
-url: `/getAllMotorbike`
-params: `q` (optional) -> Tên xe
-method: `GET`
-example:
+- url: `/getAllMotorbike`
+- params: `q` (optional) -> Tên xe
+- method: `GET`
+- example:
 
 ```bash
     {
@@ -47,12 +47,12 @@ example:
 
 ### GET_ALL_MOTORBIKE (ADMIN)
 
-url: `/admin/getAllMotorbike` || `/getAllMotorbikeAdmin`
-params: `q` (optional) -> Tên xe
+- url: `/admin/getAllMotorbike` || `/getAllMotorbikeAdmin`
+- params: `q` (optional) -> Tên xe
 `page` (optional) -> Trang
 `type` (optional) -> Loại xe
-method: `GET`
-example:
+- method: `GET`
+- example:
 
 ```bash
 {
@@ -95,9 +95,9 @@ example:
 
 ### GET_MOTORBIKE
 
-url: `/getMotorbike/{slug}`
-method: `GET`
-example: `http://localhost:5000/getXe/Honda-VARIO-160`
+- url: `/getMotorbike/{slug}`
+- method: `GET`
+- example: `http://localhost:5000/getXe/Honda-VARIO-160`
 
 ```bash
 {
@@ -123,10 +123,10 @@ example: `http://localhost:5000/getXe/Honda-VARIO-160`
 
 ### ADD_MOTORBIKE (ADMIN)
 
-url: `/admin/addMotorbike` || `/addMotorbike`
-method: `POST`
-params: 'tenXe','hangXe','bienSoXe','loaiXe','giaThue','trangThai','moTa', 'slug','images'
-images: type is Array
+- url: `/admin/addMotorbike` || `/addMotorbike`
+- method: `POST`
+- params: 'tenXe','hangXe','bienSoXe','loaiXe','giaThue','trangThai','moTa', 'slug','images'
+- images: type is Array
 
 -   ERROR
 
@@ -148,10 +148,10 @@ images: type is Array
 
 ### UPDATE_MOTORBIKE (ADMIN)
 
-url: `/admin/updateMotorbike` || `/updateMotorbike`
-method: `POST` || `PUT`
-params: 'tenXe','hangXe','bienSoXe','loaiXe','giaThue','trangThai','moTa', 'slug','images'
-images: type is Array
+- url: `/admin/updateMotorbike` || `/updateMotorbike`
+- method: `POST` || `PUT`
+- params: 'tenXe','hangXe','bienSoXe','loaiXe','giaThue','trangThai','moTa', 'slug','images'
+- images: type is Array
 
 -   ERROR
 
@@ -173,11 +173,11 @@ images: type is Array
 
 ### GET_ALL_ORDER (ADMIN)
 
-url: `/admin/getAllOrder` || `getAllOrder`
-method: `GET`
-params: `q` (optional) -> Tên khách hàng
-`page` (optional) -> Trang
-`status` (optional) -> Trạng thái của đơn hàng (Đã duyệt, chưa duyệt, hoàn tất)
+- url: `/admin/getAllOrder` || `getAllOrder`
+- method: `GET`
+- params: `q` (optional) -> Tên khách hàng
+    `page` (optional) -> Trang
+    `status` (optional) -> Trạng thái của đơn hàng (Đã duyệt, chưa duyệt, hoàn tất)
 
 ```bash
 {
@@ -252,8 +252,8 @@ params: `q` (optional) -> Tên khách hàng
 
 ### GET_ORDER_BYID (ADMIN)
 
-url: `/admin/getOrder/{id_order}`
-method: `GET`
+- url: `/admin/getOrder/{id_order}`
+- method: `GET`
 
 ```bash
 {
@@ -290,9 +290,9 @@ method: `GET`
 
 ### CONFIRM_ORDER
 
-url: `/admin/confirmOrder`
-method: `POST`
-params: 'id_employee', 'id_order', 'status'
+- url: `/admin/confirmOrder`
+- method: `POST`
+- params: 'id_employee', 'id_order', 'status'
 
 -   ERROR
 
@@ -311,10 +311,10 @@ params: 'id_employee', 'id_order', 'status'
 
 ### ADD_ORDER
 
-url: `/admin/addOrder`
-method: `POST`
-params: 'id_customer', 'startDate', 'endDate', 'ListMoto'
-listMoto: type Array
+- url: `/admin/addOrder`
+- method: `POST`
+- params: 'id_customer', 'startDate', 'endDate', 'ListMoto'
+- listMoto: type Array
 
 -   ERROR
 
@@ -333,7 +333,7 @@ listMoto: type Array
 
 ### PAY_ORDER
 
-url: `/admin/payOrder`
-method: `POST`
-params: 'id_order', 'id_employee', 'motorbike'
-motorbike: ['id_order']
+- url: `/admin/payOrder`
+- method: `POST`
+- params: 'id_order', 'id_employee', 'motorbike'
+- motorbike: ['id_order']
