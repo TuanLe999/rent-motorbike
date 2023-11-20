@@ -18,7 +18,6 @@ class CreateViolationsTable extends Migration
             $table->text('violation_content')->nullable();
             $table->timestamps();
             $table->softDeletes();
-
         });
     }
 
