@@ -6,7 +6,6 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MotoController;
 use App\Http\Controllers\TestAPIController;
-use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
@@ -35,7 +34,7 @@ Route::put('reset-password/{token}', [ResetPasswordController::class,'resetPassw
 // User
 Route::post('updateProfileUser', [UserController::class, 'updateProfileUser']);
 Route::post('lockAccount', [UserController::class,'lockAccount']);
-
+Route::get('getAllUser', [UserController::class, 'getAllUser']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
