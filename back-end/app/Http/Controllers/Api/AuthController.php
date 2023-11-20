@@ -33,17 +33,22 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255',
+            'fullname' => 'required|string|max:255',
             'email' => 'required|string|max:255|email|unique:users',
             'password' => 'required',
+            'role' => 'string'
         ]);
 
         $data['verification_token'] = Str::random(40);
+        $role = $request->input('role', 'Customer');
+        $status = $request->input('status', 'Hoạt động');
 
         $user = User::create([
-            'name' => $data['name'],
+            'fullname' => $data['fullname'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'role' => $role,
+            'status' => $status,
             'verification_token' => $data['verification_token'],
         ]);
 
@@ -73,8 +78,8 @@ class AuthController extends Controller
             else {
                 if(password_verify($data['password'], $user->password)) {
                     return response()->json([
-                    'message' => 'Login successfully',
-                    'user' => $user
+                        'message' => 'Login successfully',
+                        'user' => $user
                     ]);
                 }
                 else {

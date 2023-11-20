@@ -64,8 +64,41 @@ class UserController extends Controller
         ]);
     }
 
-    public function getAllUsers(Request $request) 
+    public function getAllUser(Request $request)
     {
+        $type = $request->input('type');
+        $q = $request->input('q');
 
+        $query = User::query();
+
+        if ($type) {
+            $query->where('role', $type);
+        }
+
+        if ($q) {
+            $query->where(function ($subquery) use ($q) {
+                $subquery->where('fullname', 'like', '%' . $q . '%')
+                        ->orWhere('email', 'like', '%' . $q . '%');
+            });
+        }
+
+        if (!$type && !$q) {
+            $users = $query->get();
+        } else {
+            $users = $query->get();
+        }
+
+        // Lấy kết quả với phân trang
+        $perPage = $request->input('per_page', 10);
+        $users = $query->paginate($perPage);
+
+        $totalPages = $users->lastPage();
+
+        return response()->json([
+            'message' => 'Success',
+            'data' => $users,
+            'total_pages' => $totalPages,
+        ]);
     }
+
 }
