@@ -9,13 +9,9 @@ Live demo: [https://rent-moto-ui.vercel.app/](https://rent-moto-ui.vercel.app/)
 -   JavaScript
 -   Create React App
 -   MDBoostraps 5
--   SASS
+-   SCSS
 -   Restful API
 -   Redux
-
-# API
-
--   API: [https://github.com/Viet-Truong/backend_rentmoto.git](https://github.com/Viet-Truong/backend_rentmoto.git)
 
 # Features
 
