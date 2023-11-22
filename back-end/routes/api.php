@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\StatisticController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MotoController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\TestAPIController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -52,3 +53,12 @@ Route::get('/test/hello',[TestAPIController::class, 'hello']);
 Route::get('/image',[ImageController::class, 'index']);
 
 Route::get('/moto',[MotoController::class, 'GetAllMoto']);
+
+//Order
+
+Route:: get('/getAllOrder',[OrderController::class, 'getAllOrder']);
+
+Route:: post('/addOrder', [OrderController::class, 'addOrder']);
+
+Route:: get('/GetOrderByIdUser/{id_user}', [OrderController::class, 'GetOrderByIdUser']);
+
