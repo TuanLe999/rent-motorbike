@@ -1,7 +1,7 @@
-import axios from "axios";
+import axios from 'axios';
 
 const request = axios.create({
-    baseURL: "http://localhost:5000",
+    baseURL: 'http://127.0.0.1:8000/api/',
 });
 
 export const get = async (path, options = {}) => {

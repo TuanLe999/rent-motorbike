@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     MDBBtn,
     MDBContainer,
@@ -11,30 +12,27 @@ import {
 import classNames from 'classnames/bind';
 import styles from './VerifyToken.module.scss';
 
+import * as authServices from '~/api/authServices';
+
 const cx = classNames.bind(styles);
 function Verify() {
     const [token, setToken] = useState('');
+    const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState({
         status: false,
         text: '',
     });
 
     const submit = async (e) => {
-        // if (checkPassword()) {
-        //     e.preventDefault();
-        //     dispatch(authRegister({ username, password }));
-        //     // if (true) {
-        //     //     setErrorMessage({
-        //     //         status: true,
-        //     //         text: "Tài khoản đã tồn tại",
-        //     //     });
-        //     // }
-        // } else {
-        //     setErrorMessage({
-        //         status: true,
-        //         text: 'Mật khẩu không trùng khớp',
-        //     });
-        // }
+        const res = await authServices.verifyToken(token);
+        if (res.type === 'error') {
+            setErrorMessage({
+                status: true,
+                text: 'Token không hợp lệ',
+            });
+        } else {
+            navigate('/');
+        }
     };
 
     return (

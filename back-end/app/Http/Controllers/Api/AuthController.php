@@ -23,10 +23,14 @@ class AuthController extends Controller
 
             return response()->json([
                 'message' => 'Email verified successfully',
+                'type' => 'success',
                 'user' => $user
             ]);
         }
-        return response()->json(['message' => 'Invalid verification token'], 422);
+        return response()->json([
+            'message' => 'Invalid verification token',
+            'type' => 'error'
+        ]);
     }
     
     // Register account
@@ -34,10 +38,17 @@ class AuthController extends Controller
     {
         $data = $request->validate([
             'fullname' => 'required|string|max:255',
-            'email' => 'required|string|max:255|email|unique:users',
+            'email' => 'required|string|max:255|email',
             'password' => 'required',
             'role' => 'string'
         ]);
+
+        if($user = User::where('email', $request->email)->first()) {
+            return response()->json([
+                'message' => 'The email has already been taken',
+                'type' => 'error',
+            ]);
+        }
 
         $data['verification_token'] = Str::random(40);
         $role = $request->input('role', 'Customer');
@@ -57,6 +68,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'User Registered',
+            'type' => 'success',
             'data' => ['user' => $user],
         ]);
     }
@@ -73,13 +85,17 @@ class AuthController extends Controller
         
         if($user && $user->exists()) {
             if($user->email_verified_at == null) {
-                return response()->json(['message' => 'Account has not been verified']);
+                return response()->json([
+                    'message' => 'Account has not been verified',
+                    'type' => 'verify'
+                ]);
             } 
             else {
                 if(password_verify($data['password'], $user->password)) {
                     return response()->json([
                         'message' => 'Login successfully',
-                        'user' => $user
+                        'type' => 'success',
+                        'data' => $user
                     ]);
                 }
                 else {

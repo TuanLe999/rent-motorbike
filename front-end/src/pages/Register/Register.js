@@ -17,7 +17,8 @@ import { authRegister } from '~/redux/authAction';
 
 const cx = classNames.bind(styles);
 function Register() {
-    const [username, setUsername] = useState();
+    const [fullname, setFullname] = useState();
+    const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [confirmPassword, setConfirmPassword] = useState();
     const [errorMessage, setErrorMessage] = useState({
@@ -28,26 +29,27 @@ function Register() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        if (auth) {
-            navigate(-1);
-        }
-    }, [navigate, auth]);
-
     const checkPassword = () => {
         return confirmPassword === password;
     };
 
+    useEffect(() => {
+        if (auth && auth?.type === 'success') {
+            navigate('/verifyToken');
+        }
+
+        if (auth && auth?.type === 'error') {
+            setErrorMessage({
+                status: true,
+                text: 'Tài khoản đã tồn tại',
+            });
+        }
+    }, [navigate, auth]);
+
     const submit = async (e) => {
         if (checkPassword()) {
             e.preventDefault();
-            dispatch(authRegister({ username, password }));
-            // if (true) {
-            //     setErrorMessage({
-            //         status: true,
-            //         text: "Tài khoản đã tồn tại",
-            //     });
-            // }
+            dispatch(authRegister({ email, password, fullname }));
         } else {
             setErrorMessage({
                 status: true,
@@ -77,11 +79,22 @@ function Register() {
                             <MDBInput
                                 wrapperClass='mb-5 mx-10 w-100 p-2'
                                 labelClass='text-white'
-                                label='Tài khoản'
+                                label='Họ và tên'
+                                type='text'
+                                className={cx('input')}
+                                value={fullname}
+                                onChange={(e) => setFullname(e.target.value)}
+                                size='lg'
+                            />
+
+                            <MDBInput
+                                wrapperClass='mb-5 mx-10 w-100 p-2'
+                                labelClass='text-white'
+                                label='Email'
                                 type='email'
                                 className={cx('input')}
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 size='lg'
                             />
                             <MDBInput

@@ -17,31 +17,29 @@ function Home() {
         useContext(AppContext);
 
     useEffect(() => {
-        const fetch = async () => {
-            await motoServices
-                .getAllXe()
-                .then((data) => {
-                    setDataMoto(data.data);
-                })
-                .catch(() => {
-                    setIsToastVisible({
-                        open: true,
-                        type: 'error',
-                        message:
-                            'Do không có kinh phí nên hiện tại server chưa được deploy. Vui lòng vào trang gitHub để biết thêm chi tiết.',
-                        title: 'Lỗi',
-                        duration: 10000,
-                    });
-
-                    setTimeout(function () {
-                        alert(
-                            'Link gitHub: https://github.com/Viet-Truong/rent-moto-ui'
-                        );
-                    }, 10000);
-                });
-        };
-
-        fetch();
+        // const fetch = async () => {
+        //     await motoServices
+        //         .getAllXe()
+        //         .then((data) => {
+        //             setDataMoto(data.data);
+        //         })
+        //         .catch(() => {
+        //             setIsToastVisible({
+        //                 open: true,
+        //                 type: 'error',
+        //                 message:
+        //                     'Do không có kinh phí nên hiện tại server chưa được deploy. Vui lòng vào trang gitHub để biết thêm chi tiết.',
+        //                 title: 'Lỗi',
+        //                 duration: 10000,
+        //             });
+        //             setTimeout(function () {
+        //                 alert(
+        //                     'Link gitHub: https://github.com/Viet-Truong/rent-moto-ui'
+        //                 );
+        //             }, 10000);
+        //         });
+        // };
+        // fetch();
     }, []);
 
     return (

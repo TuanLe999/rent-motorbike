@@ -5,6 +5,7 @@ const routes = {
     logout: '/logout',
     register: '/register',
     verifyToken: 'verifyToken',
+    forgotPassword: 'forgotPassword',
     history: '/history',
     admin: '/admin',
     profile: '/profile',

@@ -20,13 +20,12 @@ class UserController extends Controller
         $user->gender = $request->gender;
         $user->address = $request->address;
 
-        if($request->hasFile('avatar')){
+        if($request->hasFile('avatar')) {
             // save file to public/Image/Avatar
             $uploadAvatar = $request->file('avatar');
             $path = public_path('Image/Avatar');
             $fileName = $user->user_id . '.' . $uploadAvatar->getClientOriginalExtension();
             $uploadAvatar->move($path, $fileName);
-            // 
             // upload to drive
             $filePath = 'Image/Avatar/' . $fileName;
             $fileData = File::get(public_path($filePath));
@@ -36,9 +35,6 @@ class UserController extends Controller
             $user->avatar = $storagePath;
         }
 
-
-        
-        
         if(User::where('card_id', $request->card_id)->first()) {
             return response()->json([
                 'message' => 'CCCD already exist',
