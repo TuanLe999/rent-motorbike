@@ -30,6 +30,30 @@ return [
 
     'disks' => [
 
+        'google' => [
+            'driver' => 'google',
+            'clientId' => env('GOOGLE_DRIVE_CLIENT_ID'),
+            'clientSecret' => env('GOOGLE_DRIVE_CLIENT_SECRET'),
+            'refreshToken' => env('GOOGLE_DRIVE_REFRESH_TOKEN'),
+            'folderId' => env('GOOGLE_DRIVE_FOLDER_ID'),
+        ],
+
+        'avatar' => [
+            'driver' => 'google',
+            'clientId' => env('SECOND_GOOGLE_DRIVE_CLIENT_ID'),
+            'clientSecret' => env('SECOND_GOOGLE_DRIVE_CLIENT_SECRET'),
+            'refreshToken' => env('SECOND_GOOGLE_DRIVE_REFRESH_TOKEN'),
+            'folderId' => env('SECOND_GOOGLE_DRIVE_FOLDER_ID'),
+        ],
+
+        'motorbike' => [
+            'driver' => 'google',
+            'clientId' => env('THIRD_GOOGLE_DRIVE_CLIENT_ID'),
+            'clientSecret' => env('THIRD_GOOGLE_DRIVE_CLIENT_SECRET'),
+            'refreshToken' => env('THIRD_GOOGLE_DRIVE_REFRESH_TOKEN'),
+            'folderId' => env('THIRD_GOOGLE_DRIVE_FOLDER_ID'),
+        ],
+        
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
@@ -37,9 +61,9 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
-            'visibility' => 'public',
+            'root' => public_path(),
+            // 'url' => env('APP_URL').'/storage',
+            // 'visibility' => 'public',
         ],
 
         's3' => [
