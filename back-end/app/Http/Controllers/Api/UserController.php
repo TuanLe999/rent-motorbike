@@ -5,18 +5,41 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Storage;
+use File;
+
 
 class UserController extends Controller
 {
     //
     public function updateProfileUser(Request $request)
     {
-        $user = User::where("id", $request->id)->first();
-        $user->name = $request->name;
+        $user = User::where('user_id', $request->user_id)->first();
+
+        $user->fullname = $request->fullname;
         $user->gender = $request->gender;
         $user->address = $request->address;
+
+        if($request->hasFile('avatar')){
+            // save file to public/Image/Avatar
+            $uploadAvatar = $request->file('avatar');
+            $path = public_path('Image/Avatar');
+            $fileName = $user->user_id . '.' . $uploadAvatar->getClientOriginalExtension();
+            $uploadAvatar->move($path, $fileName);
+            // 
+            // upload to drive
+            $filePath = 'Image/Avatar/' . $fileName;
+            $fileData = File::get(public_path($filePath));
+            Storage::disk('avatar')->put($fileName, $fileData);
+
+            $storagePath = Storage::disk('avatar')->url($fileName);
+            $user->avatar = $storagePath;
+        }
+
+
         
-        if(User::where('cccd', $request->cccd)->first()) {
+        
+        if(User::where('card_id', $request->card_id)->first()) {
             return response()->json([
                 'message' => 'CCCD already exist',
             ]);
@@ -28,9 +51,8 @@ class UserController extends Controller
             ]);
         }
 
-        $user->email = $request->email;
         $user->phone_number = $request->phone_number;
-        $user->cccd = $request->cccd;
+        $user->card_id = $request->card_id;
         $user->update();
 
         return response()->json([
