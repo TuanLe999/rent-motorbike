@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\MotoRental;
+use App\Models\MotoRentalDetail;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -58,7 +60,7 @@ class OrderController extends Controller
         ]);
     }
 
-    
+
     // Get order by id
     public function getOrderByIdUser($id_user, $trang_thai = null)
     {
@@ -140,5 +142,23 @@ class OrderController extends Controller
             // Xử lý nếu có lỗi kết nối
             return response()->json(['status' => 'error', 'message' => 'Lỗi kết nối cơ sở dữ liệu', 'data' => null]);
         }
+    }
+
+
+    public function addOrder(Request $request)
+    {
+       
+        $data = $request->all();
+        $newRental = new MotoRental();
+        $newRental->customer_id = $data["maKH"];
+        $newRental->status = 'active';
+        $newRental->start_date = Carbon::createFromFormat('d-m-Y', $data["ngayBD"]);
+        $newRental->end_date = Carbon::createFromFormat('d-m-Y', $data["ngayKT"]);;
+        $newRental->save();
+        
+        $newRecordId = $newRental->rental_id;
+        $newRecord = MotoRental::find($newRecordId);
+
+        return response()->json(['data' => $newRecord]);
     }
 }

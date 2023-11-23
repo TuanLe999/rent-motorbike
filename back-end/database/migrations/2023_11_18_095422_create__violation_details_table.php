@@ -13,15 +13,17 @@ class CreateViolationDetailsTable extends Migration
      */
     public function up()
     {
-        
+
         Schema::create('violation_details', function (Blueprint $table) {
-            $table->string('violation_id');
-            $table->foreign('violation_id')->references('violation_id')->on('moto_rental_details');
+            $table->increments('violation_id');
+            $table->unsignedInteger('rental_detail_id');
+            $table->foreign('rental_detail_id')->references('rental_detail_id')->on('moto_rental_details');
             $table->unsignedInteger('violation_type_id');
             $table->text('note')->nullable();
-            $table->decimal('violation_cost',10,2)->nullable();
+            $table->decimal('violation_cost', 10, 2)->nullable();
             $table->timestamps();
             $table->foreign('violation_type_id')->references('violation_type_id')->on('violation_types');
+            $table->softDeletes();
         });
     }
 
