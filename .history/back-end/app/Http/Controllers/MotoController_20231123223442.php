@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Moto;
-use App\Models\Image;
+App\Models\Image;
 use Illuminate\Http\Request;
 
 class MotoController extends Controller
