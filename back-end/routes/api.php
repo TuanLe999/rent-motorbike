@@ -62,3 +62,5 @@ Route:: post('/addOrder', [OrderController::class, 'addOrder']);
 
 Route:: get('/GetOrderByIdUser/{id_user}', [OrderController::class, 'GetOrderByIdUser']);
 
+Route:: post('/payOrder', [OrderController::class, 'payOrder']);
+

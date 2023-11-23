@@ -24,7 +24,7 @@ class CreateMotoRentalDetailsTable extends Migration
             $table->unsignedInteger('rental_id');
             $table->foreign('rental_id')->references('rental_id')->on('moto_rentals');
             $table->decimal('rent_cost', 10, 2);
-            $table->date('return_date');
+            $table->date('return_date')->nullable();
            
             
             $table->timestamps();
