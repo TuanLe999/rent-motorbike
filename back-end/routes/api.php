@@ -60,5 +60,10 @@ Route:: get('/getAllOrder',[OrderController::class, 'getAllOrder']);
 
 Route:: post('/addOrder', [OrderController::class, 'addOrder']);
 
-Route:: get('/GetOrderByIdUser/{id_user}', [OrderController::class, 'GetOrderByIdUser']);
+Route:: get('/getOrderByIdUser/{id_user}', [OrderController::class, 'getOrderByIdUser']);
+
+Route:: get('/getOrder/{rental_id}',[OrderController::class, 'getOrder']);
+
+Route:: patch('/confirmOrder',[OrderController::class, 'confirmOrder']);
+
 
