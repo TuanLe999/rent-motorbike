@@ -16,13 +16,13 @@ class CreateMotoRentalDetailsTable extends Migration
         Schema::create('moto_rental_details', function (Blueprint $table) {
             $table->unsignedInteger('moto_id');
             $table->foreign('moto_id')->references('moto_id')->on('motos');
-            $table->unsignedInteger('received_staff_id');
+            $table->unsignedInteger('received_staff_id')->nullable();
             $table->foreign('received_staff_id')->references('user_id')->on('users');
             $table->string('violation_id')->unique();
             // $table->foreign('violation_id')->references('violation_id')->on('violation_details');
             $table->unsignedInteger('rental_id');
             $table->foreign('rental_id')->references('rental_id')->on('moto_rentals');
-            $table->decimal('c', 10, 2);
+            $table->decimal('rent_cost', 10, 2);
             $table->date('return_date');
             $table->primary(['rental_id', 'moto_id']);
             
