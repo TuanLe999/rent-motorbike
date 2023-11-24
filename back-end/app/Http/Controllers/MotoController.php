@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Moto;
 use App\Models\Image;
+use App\Models\MotoRental;
 use Illuminate\Http\Request;
 use File;
 use Storage;
+use Carbon\Carbon;
 
 class MotoController extends Controller
 {
@@ -161,15 +163,15 @@ class MotoController extends Controller
 
 
     //GET THE RENTAL TIME
-    private function getMotoCalendar($motoId) {
-        $result = Moto::select('motos.moto_id', 'moto_rentals.ngayBD', 'moto_rentals.ngayKT')
-            ->join('moto_rental_details', 'motos.moto_id', '=', 'moto_rental_details.moto_id')
-            ->join('moto_rentals', 'moto_rental_details.rental_id', '=', 'moto_rentals.rental_id')
-            ->where('motos.moto_id', $motoId)
-            ->whereDate('moto_rentals.ngayKT', '>', now())
+    private function getMotoCalendar($moto_id) {
+        $data = MotoRental::whereDate('end_date', '>', Carbon::now())
+            ->whereHas('RentalDetails', function ($query) use ($moto_id) {
+                $query->where('moto_id', $moto_id);
+            })
+            ->select('start_date', 'end_date')
             ->get();
 
-        return $result;
+        return $data;
     }
 
 
@@ -189,7 +191,7 @@ class MotoController extends Controller
         ];
     }
 
-
+    //FORMAT DATA FROM MOTORBIKE TO BE RETURNED TO UI
     private function formatMotoDataBySlug($moto){
         return [
             'moto_name' => $moto->moto_name,
@@ -201,7 +203,7 @@ class MotoController extends Controller
             'slug' => $moto->slug,
             'description' => $moto->description,
             'images' => $this->getImageUrls($moto->Images),
-            'calendar' => $this->getMotoCalendar($moto),
+            'calendar' => $this->getMotoCalendar($moto->moto_id),
         ];
     }
 }
