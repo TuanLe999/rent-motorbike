@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
-
 use App\Models\MotoRental;
 use App\Models\MotoRentalDetail;
 use App\Models\User;
@@ -12,11 +10,9 @@ use App\Models\ViolationType;
 use App\Models\Image;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    //get all order
     public function getAllOrder(Request $request)
     {
         $page = $request->input('page', 1);
@@ -24,7 +20,6 @@ class OrderController extends Controller
         $so_item = 10;
         $vt = ($page - 1) * $so_item;
 
-        // Lấy danh sách đơn
         $data_don = MotoRental::join('users', 'moto_rentals.customer_id', '=', 'users.user_id')
             ->select('moto_rentals.*', 'users.fullname')
             ->orderByDesc('start_date')
@@ -35,7 +30,6 @@ class OrderController extends Controller
             ->limit($so_item)
             ->get();
 
-        // Đếm số lượng đơn
         $soLuong = MotoRental::when($q, function ($query) use ($q) {
             return $query->whereHas('customer', function ($subquery) use ($q) {
                 $subquery->where('fullname', 'LIKE', '%' . $q . '%');
@@ -43,20 +37,16 @@ class OrderController extends Controller
         })
         ->count();
 
-        // Tính số trang
         $soTrang = $this->getSoTrang($soLuong, $so_item);
 
-        // Lấy chi tiết đơn
         $data_chitiet = MotoRentalDetail::join('motos', 'moto_rental_details.moto_id', '=', 'motos.moto_id')
             ->select('moto_rental_details.*', 'motos.moto_name', 'motos.moto_type', 'motos.brand', 'motos.moto_license_plates')
             ->get();
 
-        // Lấy thông tin lỗi
         $data_loi = ViolationDetail::select('violation_details.violation_id', 'violation_types.violation_content', 'violation_details.note', 'violation_details.violation_cost')
             ->join('violation_types', 'violation_details.violation_type_id', '=', 'violation_types.violation_type_id')
             ->get();
 
-        // Merge dữ liệu
         $new_data_chitiet = $data_chitiet->map(function ($item) use ($data_loi) {
             $item->violation = $data_loi->where('violation_id', $item->violation_id)->toArray();
             return $item;
@@ -71,7 +61,6 @@ class OrderController extends Controller
 
         return $this->printRs("SUCCESS", null, $new_data, true,$soTrang);
     }
-
 
 
     // Get order by id
@@ -101,7 +90,6 @@ class OrderController extends Controller
         //     })->toArray();
         // }
 
-        // Merge dữ liệu
         $new_data_chitiet = $data_chitiet->map(function ($item) use ($data_loi) {
             $item->violation = $data_loi->where('violation_id', $item->violation_id)->toArray();
             return $item;
@@ -139,6 +127,26 @@ class OrderController extends Controller
         return ceil($soLuong / $so_item);
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public function addOrder(Request $request)
     {
        
@@ -156,6 +164,61 @@ class OrderController extends Controller
         return response()->json(['data' => $newRecord]);
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public function getOrder($id_order)
     {
         // Lấy thông tin đơn thuê xe
