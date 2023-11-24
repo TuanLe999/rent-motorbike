@@ -4,10 +4,8 @@
 use App\Http\Controllers\Api\ResetPasswordController;
 use App\Http\Controllers\Api\StatisticController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MotoController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\TestAPIController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
@@ -48,25 +46,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/test',[TestAPIController::class, 'index']);
-Route::get('/test/hello',[TestAPIController::class, 'hello']);
-
-Route::get('/image',[ImageController::class, 'index']);
-
-Route::get('/moto',[MotoController::class, 'GetAllMoto']);
-
 //Order
 
 Route::get('/getAllOrder',[OrderController::class, 'getAllOrder']);
-
 Route::post('/addOrder', [OrderController::class, 'addOrder']);
-
 Route::get('/GetOrderByIdUser/{id_user}', [OrderController::class, 'GetOrderByIdUser']);
-
 Route::post('/payOrder', [OrderController::class, 'payOrder']);
 
-
 //ROUTE ABOUT MOTOR
+Route::get('/moto',[MotoController::class, 'GetAllMoto']);
 Route:: prefix('/admin') -> group(function () {
     Route::get('/getAllMotorbike',[MotoController::class, 'getAllMoto']);
     Route::get('/getMotorBySlug/{slug}', [MotoController::class, 'getMotorBySlug']);

@@ -11,8 +11,16 @@ use Illuminate\Support\Facades\Storage;
 class MotoController extends Controller
 {
     //GET ALL MOTORBIKE
-    public function getAllMoto(){
-        $motos = Moto::with('Images')->get();
+    public function getAllMoto(Request $request){
+        $query = Moto::with('Images');
+
+        // Kiểm tra xem có truyền tham số 'q' không
+        if ($request->has('q')) {
+            $query->where('moto_name', 'like', '%' . $request->input('q') . '%');
+        }
+
+        $motos = $query->get();
+
         $motosInfo = [];
         foreach ($motos as $moto) {
             $motosInfo[] = [
@@ -27,12 +35,12 @@ class MotoController extends Controller
                 'images' => $this->getImageUrls($moto->Images),
             ];
         }
+
         return response()->json([
             'status' => 'success',
             'data' => $motosInfo
         ]);
     }
-
 
     //GET MOTORBIKE BY SLUG
     public function getMotorBySlug($slug){
@@ -146,6 +154,7 @@ class MotoController extends Controller
     //FORMAT DATA FROM MOTORBIKE TO BE RETURNED TO UI
     private function formatMotoData($moto){
         return [
+            'moto_id' => $moto->moto_id,
             'moto_name' => $moto->moto_name,
             'brand' => $moto->brand,
             'status' => $moto->status,
