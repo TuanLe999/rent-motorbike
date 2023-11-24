@@ -26,6 +26,20 @@ export const register = async ({ email, password, fullname }) => {
     }
 };
 
+export const addAccount = async ({ email, password, fullname, role }) => {
+    try {
+        const res = await request.post('register', {
+            fullname,
+            email,
+            password,
+            role,
+        });
+        return res;
+    } catch (e) {
+        console.log(e);
+    }
+};
+
 export const verifyToken = async (token) => {
     try {
         const res = await request.get(`verify/${token}`);

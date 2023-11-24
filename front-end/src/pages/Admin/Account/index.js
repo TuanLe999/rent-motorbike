@@ -1,16 +1,16 @@
-import ModalAccount from "~/components/Modal/ModalAccount";
-import classNames from "classnames/bind";
-import styles from "./Account.module.scss";
+import ModalAccount from '~/components/Modal/ModalAccount';
+import classNames from 'classnames/bind';
+import styles from './Account.module.scss';
 import {
     MDBBadge,
     MDBBtn,
     MDBTable,
     MDBTableHead,
     MDBTableBody,
-} from "mdb-react-ui-kit";
-import { useState, useEffect, useContext, useRef } from "react";
+} from 'mdb-react-ui-kit';
+import { useState, useEffect, useContext, useRef } from 'react';
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faLock,
     faUsers,
@@ -25,19 +25,21 @@ import {
     faUser,
     faLockOpen,
     faUserAstronaut,
-} from "@fortawesome/free-solid-svg-icons";
+} from '@fortawesome/free-solid-svg-icons';
 
-import useDebounce from "~/hooks/useDebounce";
-import Policy from "~/components/Policy";
-import { AppContext } from "~/Context/AppContext";
-import * as userServices from "~/api/userServices";
-import Image from "~/components/Image";
-import Toast from "~/components/Toast";
+import useDebounce from '~/hooks/useDebounce';
+import Policy from '~/components/Policy';
+import { AppContext } from '~/Context/AppContext';
+import * as userServices from '~/api/userServices';
+import Image from '~/components/Image';
+import Toast from '~/components/Toast';
+import { useSelector } from 'react-redux';
 
 const cx = classNames.bind(styles);
 const PAGE = 1;
 
 function Account() {
+    const { auth } = useSelector((state) => state.auth);
     const [accountData, setAccountData] = useState();
     const {
         setIsModalAccountVisible,
@@ -48,179 +50,159 @@ function Account() {
     const [dash, setDash] = useState();
     const [totalPage, setTotalPage] = useState();
     const [pageNumber, setPageNumber] = useState(PAGE);
-    const [selectedOption, setSelectedOption] = useState("");
+    const [selectedOption, setSelectedOption] = useState('');
 
     // Search
     const inputRef = useRef();
-    const [searchValue, setSearchValue] = useState("");
+    const [searchValue, setSearchValue] = useState('');
     const [loading, setLoading] = useState(false);
 
     const debouncedValue = useDebounce(searchValue, 500);
     const handleClear = () => {
-        setSearchValue("");
+        setSearchValue('');
         inputRef.current.focus();
     };
 
     const handleChangeInput = (e) => {
         const searchValue = e.target.value;
-        if (!searchValue.startsWith(" ")) {
+        if (!searchValue.startsWith(' ')) {
             setSearchValue(searchValue);
         }
+    };
+
+    const fetchData = async (debouncedValue = '', selectedOption) => {
+        const result = await userServices.getAllUser({
+            role: selectedOption,
+            q: debouncedValue,
+            page: pageNumber,
+        });
+        setAccountData(result.data.data);
+        setTotalPage(result.total_pages);
     };
 
     useEffect(() => {
         const thongKe = async () => {
             const result = await userServices.thongKeUser();
-            setDash(result);
+            setDash(result.user);
         };
         thongKe();
 
         if (!debouncedValue.trim()) {
-            if (selectedOption === "") {
+            if (selectedOption === '') {
                 fetchData();
-            } else if (selectedOption === "Customer") {
-                fetchDataCustomer();
-            } else if (selectedOption === "Employees") {
-                fetchDataEmployees();
+            } else if (selectedOption === 'Khách hàng') {
+                fetchData(selectedOption);
+            } else if (selectedOption === 'Nhân viên') {
+                fetchData(selectedOption);
             }
         }
 
         // call API search
-        if (selectedOption === "") {
+        if (selectedOption === '') {
             const fetch = async () => {
                 setLoading(true);
                 fetchData(debouncedValue);
                 setLoading(false);
             };
             fetch();
-        } else if (selectedOption === "Customer") {
+        } else if (selectedOption === 'Khách hàng') {
             const fetch = async () => {
                 setLoading(true);
-                fetchDataCustomer(debouncedValue);
+                fetchData(debouncedValue, selectedOption);
                 setLoading(false);
             };
             fetch();
         } else {
             const fetch = async () => {
                 setLoading(true);
-                fetchDataEmployees(debouncedValue);
+                fetchData(debouncedValue, selectedOption);
                 setLoading(false);
             };
             fetch();
         }
-    }, [pageNumber, selectedOption, isToastVisible]);
-
-    const fetchData = async () => {
-        const result = await userServices.getAllUser({
-            q: debouncedValue,
-            page: pageNumber,
-        });
-        setAccountData(result.data);
-        setTotalPage(result.soTrang);
-    };
-
-    const fetchDataCustomer = async () => {
-        const result = await userServices.getAllCustomer({
-            q: debouncedValue,
-            page: pageNumber,
-        });
-        setAccountData(result.data);
-        setTotalPage(result.soTrang);
-    };
-
-    const fetchDataEmployees = async () => {
-        const result = await userServices.getAllEmployees({
-            q: debouncedValue,
-            page: pageNumber,
-        });
-        setAccountData(result.data);
-        setTotalPage(result.soTrang);
-    };
+    }, [pageNumber, selectedOption, isToastVisible, debouncedValue]);
 
     const handleChange = (event) => {
         const selectedValue = event.target.value;
         setSelectedOption(selectedValue);
 
         // Gọi API tương ứng với giá trị đã chọn
-        if (selectedValue === "") {
+        if (selectedOption === '') {
             fetchData();
-        } else if (selectedValue === "Employees") {
-            fetchDataEmployees();
-        } else if (selectedValue === "Customer") {
-            fetchDataCustomer();
+        } else if (selectedOption === 'Khách hàng') {
+            fetchData(selectedOption);
+        } else if (selectedOption === 'Nhân viên') {
+            fetchData(selectedOption);
         }
     };
 
-    const handleLockAccount = async (maTaiKhoan, trangThai) => {
-        const result = await userServices.updateProfile({
-            maTaiKhoan: maTaiKhoan,
-            trangThai: trangThai,
+    const handleLockAccount = async (user_id, userLock, status) => {
+        const result = await userServices.lockAccount({
+            user_id: user_id,
+            userLock: userLock,
+            status: status,
         });
-        console.log(result);
-        if (result.status === "success") {
+        if (result.type === 'success') {
             setIsToastVisible({
-                type: "success",
-                message:
-                    trangThai === "Khoá"
-                        ? "Đã khoá tài khoản thành công"
-                        : "Đã mở khoá tài khoản thành công",
-                title: "Thành công",
+                type: 'success',
+                message: 'Thay đổi trạng thái tài khoản thành công',
+                title: 'Thành công',
                 open: true,
             });
         } else {
             setIsToastVisible({
-                type: "error",
-                message: "Có lỗi xảy ra. Vui lòng thử lại sau",
-                title: "Thất bại",
+                type: 'error',
+                message: 'Có lỗi xảy ra. Vui lòng thử lại sau',
+                title: 'Thất bại',
                 open: true,
             });
         }
     };
 
     return (
-        <div className={cx("wrapper")}>
-            <h1 className={cx("header")}>
-                <FontAwesomeIcon icon={faUsers} className={cx("header-icon")} />
+        <div className={cx('wrapper')}>
+            <h1 className={cx('header')}>
+                <FontAwesomeIcon icon={faUsers} className={cx('header-icon')} />
                 Quản lí tài khoản
             </h1>
             <ModalAccount />
-            <div className={cx("wrapper-policy")}>
+            <div className={cx('wrapper-policy')}>
                 <Policy
                     icon={<FontAwesomeIcon icon={faUsersRectangle} />}
-                    name={"Tổng người dùng"}
-                    value={dash?.SumUser}
+                    name={'Tổng người dùng'}
+                    value={dash?.totalUser}
                 />
                 <Policy
                     icon={<FontAwesomeIcon icon={faUserAstronaut} />}
-                    name={"Tổng admin"}
-                    value={dash?.SumUser - dash?.SumUserEmpl - dash?.SumUserCus}
+                    name={'Sô tài khoản chưa xác thực'}
+                    value={dash?.totalUserVerifyYet}
                 />
                 <Policy
                     icon={<FontAwesomeIcon icon={faUserTie} />}
-                    name={"Số nhân viên"}
-                    value={dash?.SumUserEmpl}
+                    name={'Số nhân viên'}
+                    value={dash?.totalEmployee}
                 />
                 <Policy
                     icon={<FontAwesomeIcon icon={faUser} />}
-                    name={"Số khách hàng"}
-                    value={dash?.SumUserCus}
+                    name={'Số khách hàng'}
+                    value={dash?.totalCustomer}
                 />
             </div>
 
-            <div className={cx("action-table")}>
+            <div className={cx('action-table')}>
                 {/* <Search /> */}
                 <div>
-                    <div className={cx("search")}>
+                    <div className={cx('search')}>
                         <input
                             value={searchValue}
-                            placeholder="Tìm kiếm"
-                            type="text"
+                            placeholder='Tìm kiếm'
+                            type='text'
                             spellCheck={false}
                             onChange={handleChangeInput}
                         />
                         {!!searchValue && !loading && (
                             <button
-                                className={cx("clear")}
+                                className={cx('clear')}
                                 onClick={handleClear}
                             >
                                 <FontAwesomeIcon icon={faCircleXmark} />
@@ -228,145 +210,136 @@ function Account() {
                         )}
                         {loading && (
                             <FontAwesomeIcon
-                                className={cx("loading")}
+                                className={cx('loading')}
                                 icon={faSpinner}
                             />
                         )}
                         <button
-                            className={cx("search-btn")}
+                            className={cx('search-btn')}
                             onMouseDown={(e) => e.preventDefault()}
                         >
                             <FontAwesomeIcon icon={faMagnifyingGlass} on />
                         </button>
                     </div>
                 </div>
-                <div className={cx("right-action")}>
+                <div className={cx('right-action')}>
                     <MDBBtn
                         onClick={() => {
                             setIsModalAccountVisible(true);
                             setData(undefined);
                         }}
-                        className={cx("button_showModal")}
+                        className={cx('button_showModal')}
                     >
                         <FontAwesomeIcon icon={faPlus} />
                     </MDBBtn>
                     <div>
                         <select
-                            className={cx("select")}
+                            className={cx('select')}
                             onChange={handleChange}
                         >
-                            <option value="">Mặc định</option>
-                            <option value="Employees">Nhân viên</option>
-                            <option value="Customer">Khách hàng</option>
+                            <option value=''>Mặc định</option>
+                            <option value='Nhân viên'>Nhân viên</option>
+                            <option value='Khách hàng'>Khách hàng</option>
                         </select>
                     </div>
                 </div>
             </div>
-            <MDBTable align="middle" className={cx("table")}>
+            <MDBTable align='middle' className={cx('table')}>
                 <MDBTableHead>
                     <tr>
-                        <th scope="col">Tên</th>
-                        <th scope="col">Tài khoản</th>
-                        <th scope="col">Mật khẩu</th>
-                        <th scope="col">Role</th>
-                        <th scope="col">Actions</th>
+                        <th scope='col'>Tên</th>
+                        <th scope='col'>Ngày sinh</th>
+                        <th scope='col'>Role</th>
+                        <th scope='col'>Actions</th>
                     </tr>
                 </MDBTableHead>
                 <MDBTableBody>
                     {accountData?.map((item) => {
                         return (
                             <tr
-                                key={item.maTaiKhoan}
+                                key={item.user_id}
                                 className={cx(
-                                    item.trangThai === "Khoá" ? "lock" : ""
+                                    item.status === 'Khoá' ? 'lock' : ''
                                 )}
                             >
                                 <td>
-                                    <div className="d-flex align-items-center">
+                                    <div className='d-flex align-items-center'>
                                         <Image
-                                            // src={
-                                            //     `http://localhost:5000/${item?.avatar}` ||
-                                            //     ""
-                                            // }
-                                            alt=""
+                                            src={item?.avatar}
+                                            alt=''
                                             style={{
-                                                width: "45px",
-                                                height: "45px",
+                                                width: '45px',
+                                                height: '45px',
                                             }}
-                                            className="rounded-circle"
+                                            className='rounded-circle'
                                         />
-                                        <div className="ms-3">
-                                            <p className="fw-bold mb-1">
-                                                {item.hoTen}
+                                        <div className='ms-3'>
+                                            <p className='fw-bold mb-1'>
+                                                {item.fullname}
                                             </p>
-                                            <p className="text-muted mb-0">
+                                            <p className='text-muted mb-0'>
                                                 {item.email}
                                             </p>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <p className="fw-normal mb-1">
-                                        {item.taiKhoan}
-                                    </p>
+                                    <p className='fw-normal mb-1'>{item.dob}</p>
                                 </td>
                                 <td>
-                                    <p className="fw-normal mb-1">
-                                        {item.matKhau}
-                                    </p>
-                                </td>
-                                <td>
-                                    {item.phanQuyen == "Admin" ? (
+                                    {item.role === 'Admin' ? (
                                         <MDBBadge
-                                            color="success"
+                                            color='success'
                                             pill
-                                            className="fw-normal mb-1"
+                                            className='fw-normal mb-1'
                                         >
-                                            {item.phanQuyen}
+                                            {item.role}
                                         </MDBBadge>
                                     ) : (
                                         <MDBBadge
-                                            color="warning"
+                                            color='warning'
                                             pill
-                                            className="fw-normal mb-1"
+                                            className='fw-normal mb-1'
                                         >
-                                            {item.phanQuyen}
+                                            {item.role}
                                         </MDBBadge>
                                     )}
                                 </td>
                                 <td>
-                                    {item.trangThai === "Hoạt động" ? (
+                                    {item.status === 'Hoạt động' ? (
                                         <MDBBtn
-                                            color="link"
+                                            color='link'
                                             rounded
-                                            size="sm"
+                                            size='sm'
                                             onClick={() =>
                                                 handleLockAccount(
-                                                    item.maTaiKhoan,
-                                                    "Khoá"
+                                                    auth.user_id,
+                                                    item.user_id,
+                                                    'Khoá'
                                                 )
                                             }
                                         >
                                             <FontAwesomeIcon
                                                 icon={faLock}
-                                                className={cx("actions-btn")}
+                                                className={cx('actions-btn')}
                                             />
                                         </MDBBtn>
                                     ) : (
                                         <MDBBtn
-                                            color="link"
+                                            color='link'
                                             rounded
-                                            size="sm"
+                                            size='sm'
                                             onClick={() =>
                                                 handleLockAccount(
-                                                    item.maTaiKhoan,
-                                                    "Hoạt động"
+                                                    auth.user_id,
+                                                    item.user_id,
+                                                    'Hoạt động'
                                                 )
                                             }
                                         >
                                             <FontAwesomeIcon
                                                 icon={faLockOpen}
-                                                className={cx("actions-btn")}
+                                                className={cx('actions-btn')}
                                             />
                                         </MDBBtn>
                                     )}
@@ -376,22 +349,22 @@ function Account() {
                     })}
                 </MDBTableBody>
             </MDBTable>
-            <nav aria-label="..." className={cx("page_navigation")}>
+            <nav aria-label='...' className={cx('page_navigation')}>
                 <button
-                    className={cx("btn-nav", "left-btn")}
+                    className={cx('btn-nav', 'left-btn')}
                     onClick={() => {
                         if (pageNumber > 1) setPageNumber((prev) => prev - 1);
                     }}
                 >
                     <FontAwesomeIcon icon={faAngleLeft} />
                 </button>
-                <div className={cx("page-numbers")}>
+                <div className={cx('page-numbers')}>
                     {Array.from({ length: totalPage }, (_, i) => i + 1).map(
                         (page) => (
                             <button
                                 className={cx(
-                                    "btn-page",
-                                    pageNumber == page ? "btn-selected" : ""
+                                    'btn-page',
+                                    pageNumber === page ? 'btn-selected' : ''
                                 )}
                                 onClick={() => setPageNumber(page)}
                                 key={page}
@@ -402,7 +375,7 @@ function Account() {
                     )}
                 </div>
                 <button
-                    className={cx("btn-nav", "right-btn")}
+                    className={cx('btn-nav', 'right-btn')}
                     onClick={() => {
                         if (pageNumber < totalPage) {
                             setPageNumber((prev) => prev + 1);

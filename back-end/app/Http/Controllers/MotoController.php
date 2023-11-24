@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Moto;
 use App\Models\Image;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
+use File;
+use Storage;
 
 class MotoController extends Controller
 {
@@ -19,11 +19,16 @@ class MotoController extends Controller
             $query->where('moto_name', 'like', '%' . $request->input('q') . '%');
         }
 
+        if ($request->has('type')) {
+            $query->where('moto_type', 'like', '%' . $request->input('type') . '%');
+        }
+
         $motos = $query->get();
 
         $motosInfo = [];
         foreach ($motos as $moto) {
             $motosInfo[] = [
+                'moto_id' => $moto->moto_id,
                 'moto_name' => $moto->moto_name,
                 'brand' => $moto->brand,
                 'status' => $moto->status,
@@ -59,44 +64,45 @@ class MotoController extends Controller
     //CREATE A NEW MOTORBIKE
     public function createMoto(Request $request){
         if ($request->hasFile('images')) {
-        $images = $request->file('images');
-        $imageUrls = [];
+            $images = $request->file('images');
+            $imageUrls = [];
 
-        foreach ($images as $image) {
-            $fileName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('Image/Motorbike'), $fileName);
-            $fileData = File::get(public_path('Image/Motorbike/' . $fileName));
-            Storage::disk('motorbike')->put($fileName, $fileData);
-            $imageUrls[] = asset('Image/Motorbike/' . $fileName);
-        }
+            foreach ($images as $image) {
+                $fileName = time() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('Image/Motorbike'), $fileName);
+                $fileData = File::get(public_path('Image/Motorbike/' . $fileName));
+                Storage::disk('motorbike')->put($fileName, $fileData);
+                $storagePath = Storage::disk('motorbike')->url($fileName);
+                array_push($imageUrls, $storagePath);
+            }
 
-        $moto = Moto::create([
-            'moto_name' => $request->input('moto_name'),
-            'brand' => $request->input('brand'),
-            'status' => $request->input('status'),
-            'moto_license_plates' => $request->input('moto_license_plates'),
-            'moto_type' => $request->input('moto_type'),
-            'rent_cost' => $request->input('rent_cost'),
-            'slug' => $request->input('slug'),
-            'description' => $request->input('description'),
-        ]);
-
-        foreach ($imageUrls as $imageUrl) {
-            Image::create([
-                'moto_id' => $moto->moto_id,
-                'url' => $imageUrl,
+            $moto = Moto::create([
+                'moto_name' => $request->input('moto_name'),
+                'brand' => $request->input('brand'),
+                'status' => $request->input('status'),
+                'moto_license_plates' => $request->input('moto_license_plates'),
+                'moto_type' => $request->input('moto_type'),
+                'rent_cost' => $request->input('rent_cost'),
+                'slug' => $request->input('slug'),
+                'description' => $request->input('description'),
             ]);
-        }
 
-        return response()->json([
-            'status' => 'success',
-            'data' => 'Images received',
-        ]);
+            foreach ($imageUrls as $imageUrl) {
+                Image::create([
+                    'moto_id' => $moto->moto_id,
+                    'url' => $imageUrl,
+                ]);
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'data' => 'Images received',
+            ]);
         } else {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'No image provided',
-        ], 400);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No image provided',
+            ], 400);
         }
     }
 
@@ -117,7 +123,8 @@ class MotoController extends Controller
                 $image->move(public_path('Image/Motorbike'), $fileName);
                 $fileData = File::get(public_path('Image/Motorbike/' . $fileName));
                 Storage::disk('motorbike')->put($fileName, $fileData);
-                $imageUrls[] = asset('Image/Motorbike/' . $fileName);
+                $storagePath = Storage::disk('motorbike')->url($fileName);
+                array_push($imageUrls, $storagePath);
             }
 
             $moto->update([

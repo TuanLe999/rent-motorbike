@@ -81,7 +81,7 @@ function Header() {
                             <Menu items={userMenu} onChange={handleMenuChange}>
                                 <Image
                                     className={cx('user-avatar')}
-                                    src={auth.avatar}
+                                    src={auth.avatar || ''}
                                     alt={'avatar'}
                                 />
                             </Menu>

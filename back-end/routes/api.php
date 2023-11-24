@@ -35,7 +35,7 @@ Route::post('change-password', [ResetPasswordController::class,'resetPassword'])
 Route::post('updateProfileUser', [UserController::class, 'updateProfileUser']);
 Route::post('updateAvatar', [UserController::class, 'updateAvatar']);
 Route::post('lockAccount', [UserController::class,'lockAccount']);
-Route::get('getAllUser', [UserController::class, 'getAllUser']);
+Route::post('getAllUser', [UserController::class, 'getAllUser']);
 
 // Statistic
 Route::get('statisticMoto', [StatisticController::class,'Moto']);
@@ -54,7 +54,7 @@ Route::get('/GetOrderByIdUser/{id_user}', [OrderController::class, 'GetOrderById
 Route::post('/payOrder', [OrderController::class, 'payOrder']);
 
 //ROUTE ABOUT MOTOR
-Route::get('/moto',[MotoController::class, 'GetAllMoto']);
+Route::post('/moto',[MotoController::class, 'GetAllMoto']);
 Route:: prefix('/admin') -> group(function () {
     Route::get('/getAllMotorbike',[MotoController::class, 'getAllMoto']);
     Route::get('/getMotorBySlug/{slug}', [MotoController::class, 'getMotorBySlug']);

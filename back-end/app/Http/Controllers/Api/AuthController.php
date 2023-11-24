@@ -51,7 +51,7 @@ class AuthController extends Controller
         }
 
         $data['verification_token'] = Str::random(40);
-        $role = $request->input('role', 'Customer');
+        $role = $request->input('role', 'Khách hàng');
         $status = $request->input('status', 'Hoạt động');
 
         $user = User::create([

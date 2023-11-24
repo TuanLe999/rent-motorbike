@@ -81,38 +81,48 @@ class UserController extends Controller
     }
     public function lockAccount(Request $request)
     {
-        $user = User::where('id', $request->id)->first();
-        $userLock = User::where('id', $request->idUserLock)->first();
+        $user = User::where('user_id', $request->user_id)->first();
+        $userLock = User::where('user_id', $request->userLock)->first();
+        $status = $request->status;
 
-        if(!$user->exists() || !$userLock->exists()) {
+        if(!User::where('user_id', $request->user_id)->first() 
+                || 
+            !User::where('user_id', $request->userLock)->first()) {
             return response()->json([
                 'message'=> 'Not found account',
+                'type' => 'error',
             ]);
         }
         
         if($user->role != 'Admin') {
             return response()->json([
                 'message' => 'You don\'t have permission to access this url',
-            ], 403);
+                'type' => 'error',
+            ]);
         }
 
-        $userLock->status = User::STATUS_LOCKED;
+        if($status == 'Hoạt động') {
+            $userLock->status = User::STATUS_ACTIVE;
+        } else {
+            $userLock->status = User::STATUS_LOCKED;
+        }
         $userLock->update();
 
         return response()->json([
-            'message' => 'Lock account user success',
+            'message' => 'Change status account user success',
+            'type' => 'success',
         ]);
     }
 
     public function getAllUser(Request $request)
     {
-        $type = $request->input('type');
+        $role = $request->input('role');
         $q = $request->input('q');
 
         $query = User::query();
 
-        if ($type) {
-            $query->where('role', $type);
+        if ($role) {
+            $query->where('role', $role);
         }
 
         if ($q) {
@@ -122,7 +132,7 @@ class UserController extends Controller
             });
         }
 
-        if (!$type && !$q) {
+        if (!$role && !$q) {
             $users = $query->get();
         } else {
             $users = $query->get();

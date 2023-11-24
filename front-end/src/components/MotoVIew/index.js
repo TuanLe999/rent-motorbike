@@ -67,7 +67,7 @@ function MotoView({ item }) {
                 <div className={cx('product')}>
                     <div className={cx('product__images')}>
                         <div className={cx('product__images__list')}>
-                            {product?.hinhAnh?.map((img, index) => {
+                            {product?.images?.map((img, index) => {
                                 return (
                                     <div
                                         className={cx(
@@ -78,21 +78,13 @@ function MotoView({ item }) {
                                         }}
                                         key={index}
                                     >
-                                        <img
-                                            // src={`http://localhost:5000/${img}`}
-                                            alt=''
-                                        />
+                                        <img src={img} alt='' />
                                     </div>
                                 );
                             })}
                         </div>
                         <div className={cx('product__images__main')}>
-                            {previewImage && (
-                                <img
-                                    // src={`http://localhost:5000/${previewImage}`}
-                                    alt=''
-                                />
-                            )}
+                            {previewImage && <img src={previewImage} alt='' />}
                         </div>
                     </div>
                     <div className={cx('product__info')}>
