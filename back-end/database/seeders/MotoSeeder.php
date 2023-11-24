@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Moto;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class MotoSeeder extends Seeder
 {

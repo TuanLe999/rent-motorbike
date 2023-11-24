@@ -25,7 +25,7 @@ class StatisticController extends Controller
 
         return response()->json([
                 'message' => 'Successfully',
-                'user' => [
+                'moto' => [
                     'totalMoto' => $totalMoto,
                     'totalMotoActive' => $totalMotoActive,
                     'totalMotoUnActive' => $totalMotoUnActive,
@@ -42,11 +42,11 @@ class StatisticController extends Controller
 
         $totalOrderReturned = MotoRental::where('status', 'Hoàn tất')->count();
 
-        $totalMoney = MotoRentalDetail::whereNotNull('return_date')->sum('c');
+        $totalMoney = MotoRentalDetail::whereNotNull('return_date')->sum('rent_cost');
         
         return response()->json([
                 'message' => 'Successfully',
-                'user' => [
+                'order' => [
                     'totalOrder' => $totalOrder,
                     'totalOrderConfirmed' => $totalOrderConfirmed,
                     'totalOrderReturned' => $totalOrderReturned,

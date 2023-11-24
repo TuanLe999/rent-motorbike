@@ -1,6 +1,6 @@
-import classNames from "classnames/bind";
-import styles from "./ModalAccount.module.scss";
-import React, { useState, useContext, memo } from "react";
+import classNames from 'classnames/bind';
+import styles from './ModalAccount.module.scss';
+import React, { useState, useContext, memo } from 'react';
 import {
     MDBBtn,
     MDBModal,
@@ -15,33 +15,35 @@ import {
     MDBDropdownMenu,
     MDBDropdownToggle,
     MDBDropdownItem,
-} from "mdb-react-ui-kit";
+} from 'mdb-react-ui-kit';
 
-import { AppContext } from "~/Context/AppContext";
-import * as authServices from "~/api/authServices";
+import { AppContext } from '~/Context/AppContext';
+import * as authServices from '~/api/authServices';
 
 const cx = classNames.bind(styles);
 function ModalAccount() {
     const { isModalAccountVisible, data, typeModal, setIsModalAccountVisible } =
         useContext(AppContext);
-    const [account, setAccount] = useState();
-    const [password, setPassword] = useState();
+    const [email, setEmail] = useState();
+    const [fullname, setFullname] = useState();
+    const [passwordField, setPasswordField] = useState();
     const [confirmPassword, setConfirmPassword] = useState();
     const [role, setRole] = useState();
     const [error, setError] = useState({
         isError: false,
-        message: "",
+        message: '',
     });
 
-    const handleAddAccount = async (taiKhoan, matKhau, role) => {
-        if (password === confirmPassword) {
-            const result = await authServices.register({
-                username: taiKhoan,
-                password: matKhau,
+    const handleAddAccount = async (fullname, email, password, role) => {
+        if (passwordField === confirmPassword) {
+            const result = await authServices.addAccount({
+                fullname: fullname,
+                email: email,
+                password: password,
                 role: role,
             });
             console.log(result);
-            if (result.status === "success") {
+            if (result.type === 'success') {
                 setIsModalAccountVisible(false);
             } else {
                 setError({
@@ -52,106 +54,117 @@ function ModalAccount() {
         } else {
             setError({
                 isError: true,
-                message: "Mật khẩu không trùng khớp",
+                message: 'Mật khẩu không trùng khớp',
             });
-            console.log("Mật khẩu không trùng khớp");
+            console.log('Mật khẩu không trùng khớp');
         }
     };
 
     return (
-        <div className={cx("wrapper-modal")}>
-            <MDBModal show={isModalAccountVisible} tabIndex="-1">
+        <div className={cx('wrapper-modal')}>
+            <MDBModal show={isModalAccountVisible} tabIndex='-1'>
                 <MDBModalDialog>
                     <MDBModalContent>
                         <MDBModalHeader>
-                            <MDBModalTitle>
-                                {typeModal == "ADD"
-                                    ? "Thêm tài khoản"
-                                    : "Sửa thông tin tài khoản"}
-                            </MDBModalTitle>
+                            <MDBModalTitle>Thêm tài khoản</MDBModalTitle>
                             <MDBBtn
-                                className="btn-close"
-                                color="none"
+                                className='btn-close'
+                                color='none'
                                 onClick={() => setIsModalAccountVisible(false)}
                             ></MDBBtn>
                         </MDBModalHeader>
 
                         <MDBModalBody>
                             <MDBInput
-                                className={cx("input")}
-                                label={"Tài khoản"}
-                                value={account}
-                                onChange={(e) => setAccount(e.target.value)}
-                                type="text"
+                                className={cx('input')}
+                                label={'Họ và tên'}
+                                value={fullname}
+                                onChange={(e) => setFullname(e.target.value)}
+                                type='text'
                             />
 
                             <MDBInput
-                                className={cx("input")}
-                                label={"Mật khẩu"}
+                                className={cx('input')}
+                                label={'Email'}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                type='email'
+                            />
+
+                            <MDBInput
+                                className={cx('input')}
+                                label={'Mật khẩu'}
+                                value={passwordField}
+                                onChange={(e) =>
+                                    setPasswordField(e.target.value)
+                                }
+                                type='password'
+                            />
+
+                            <MDBInput
+                                className={cx('input')}
+                                label={'Xác nhận mật khẩu'}
                                 value={confirmPassword}
                                 onChange={(e) =>
                                     setConfirmPassword(e.target.value)
                                 }
-                                type="password"
+                                type='password'
                             />
 
-                            <MDBInput
-                                className={cx("input")}
-                                label={"Xác nhận mật khẩu"}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                type="password"
-                            />
-
-                            <div className={cx("wrapper-dropdown")}>
-                                <MDBDropdown className={cx("dropdown")}>
+                            <div className={cx('wrapper-dropdown')}>
+                                <MDBDropdown className={cx('dropdown')}>
                                     <MDBDropdownToggle>
                                         Vai trò
                                     </MDBDropdownToggle>
                                     <MDBDropdownMenu>
                                         <MDBDropdownItem
                                             link
-                                            onClick={() => setRole("Admin")}
+                                            onClick={() => setRole('Admin')}
                                         >
                                             Admin
                                         </MDBDropdownItem>
                                         <MDBDropdownItem
                                             link
-                                            onClick={() => setRole("Nhân viên")}
+                                            onClick={() => setRole('Nhân viên')}
                                         >
                                             Nhân viên
                                         </MDBDropdownItem>
                                         <MDBDropdownItem
                                             link
                                             onClick={() =>
-                                                setRole("Khách hàng")
+                                                setRole('Khách hàng')
                                             }
                                         >
                                             Khách hàng
                                         </MDBDropdownItem>
                                     </MDBDropdownMenu>
                                 </MDBDropdown>
-                                <div className={cx("value_dropdown")}>
+                                <div className={cx('value_dropdown')}>
                                     {role}
                                 </div>
                             </div>
-                            <p className={cx("error-message")}>
+                            <p className={cx('error-message')}>
                                 {error.message}
                             </p>
                         </MDBModalBody>
 
                         <MDBModalFooter>
                             <MDBBtn
-                                className={cx("button_save")}
-                                color="secondary"
+                                className={cx('button_save')}
+                                color='secondary'
                                 onClick={() => setIsModalAccountVisible(false)}
                             >
                                 Huỷ
                             </MDBBtn>
                             <MDBBtn
-                                className={cx("button_save")}
+                                className={cx('button_save')}
                                 onClick={() => {
-                                    handleAddAccount(account, password, role);
+                                    handleAddAccount(
+                                        fullname,
+                                        email,
+                                        passwordField,
+                                        role
+                                    );
                                 }}
                             >
                                 Lưu

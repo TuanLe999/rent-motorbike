@@ -9,47 +9,39 @@ import {
     MDBInput,
 } from 'mdb-react-ui-kit';
 import classNames from 'classnames/bind';
-import styles from './Register.module.scss';
-import { Link, useNavigate } from 'react-router-dom';
+import styles from './ForgotPassword.module.scss';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { authRegister } from '~/redux/authAction';
+import * as userServices from '~/api/userServices';
 
 const cx = classNames.bind(styles);
-function Register() {
-    const [fullname, setFullname] = useState();
-    const [email, setEmail] = useState();
+function ForgotPassword() {
+    const [token, setToken] = useState();
     const [password, setPassword] = useState();
     const [confirmPassword, setConfirmPassword] = useState();
     const [errorMessage, setErrorMessage] = useState({
         status: false,
         text: '',
     });
-    const { auth } = useSelector((state) => state.auth);
     const navigate = useNavigate();
-    const dispatch = useDispatch();
 
     const checkPassword = () => {
         return confirmPassword === password;
     };
 
-    useEffect(() => {
-        if (auth && auth?.type === 'success') {
-            navigate('/verifyToken');
-        }
-
-        if (auth && auth?.type === 'error') {
-            setErrorMessage({
-                status: true,
-                text: 'Tài khoản đã tồn tại',
-            });
-        }
-    }, [navigate, auth]);
-
     const submit = async (e) => {
         if (checkPassword()) {
             e.preventDefault();
-            dispatch(authRegister({ email, password, fullname }));
+            const res = await userServices.changePassword({ token, password });
+            if (res.type === 'success') {
+                navigate('/login');
+            } else {
+                setErrorMessage({
+                    status: true,
+                    text: 'Token không hợp lệ',
+                });
+            }
         } else {
             setErrorMessage({
                 status: true,
@@ -67,34 +59,17 @@ function Register() {
                     >
                         <MDBCardBody className='p-5 d-flex flex-column align-items-center mx-auto w-100'>
                             <h2 className='fw-bold mb-2 text-uppercase text-white'>
-                                Đăng kí
+                                Forgot Password
                             </h2>
-                            <p
-                                className='fw-bold mb-5 mt-2 fz-2rem'
-                                style={{ color: '#ff3d13' }}
-                            >
-                                Welcome!
-                            </p>
 
                             <MDBInput
                                 wrapperClass='mb-5 mx-10 w-100 p-2'
                                 labelClass='text-white'
-                                label='Họ và tên'
+                                label='Token'
                                 type='text'
                                 className={cx('input')}
-                                value={fullname}
-                                onChange={(e) => setFullname(e.target.value)}
-                                size='lg'
-                            />
-
-                            <MDBInput
-                                wrapperClass='mb-5 mx-10 w-100 p-2'
-                                labelClass='text-white'
-                                label='Email'
-                                type='email'
-                                className={cx('input')}
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                value={token}
+                                onChange={(e) => setToken(e.target.value)}
                                 size='lg'
                             />
                             <MDBInput
@@ -132,21 +107,8 @@ function Register() {
                                 style={{ color: '#ff3d13', fontSize: '16px' }}
                                 onClick={submit}
                             >
-                                Đăng kí
+                                Thay đổi mật khẩu
                             </MDBBtn>
-
-                            <div>
-                                <p className='mb-0'>
-                                    Bạn đã có tài khoản?
-                                    <Link
-                                        to='/login'
-                                        class='fw-bold'
-                                        style={{ color: '#ff3d13' }}
-                                    >
-                                        Đăng nhập
-                                    </Link>
-                                </p>
-                            </div>
                         </MDBCardBody>
                     </MDBCard>
                 </MDBCol>
@@ -155,4 +117,4 @@ function Register() {
     );
 }
 
-export default Register;
+export default ForgotPassword;

@@ -22,7 +22,6 @@ class User extends Model
     const STATUS_LOCKED = 'Khoá';
 
     protected $fillable = [
-        'user_name',
         'password',
         'email',
         'role',
