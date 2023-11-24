@@ -67,7 +67,7 @@ class MotoController extends Controller
             $image->move(public_path('Image/Motorbike'), $fileName);
             $fileData = File::get(public_path('Image/Motorbike/' . $fileName));
             Storage::disk('motorbike')->put($fileName, $fileData);
-            $imageUrls[] = Storage::disk('motorbike')->url($fileName);
+            $imageUrls[] = asset('Image/Motorbike/' . $fileName);
         }
 
         $moto = Moto::create([
@@ -117,7 +117,7 @@ class MotoController extends Controller
                 $image->move(public_path('Image/Motorbike'), $fileName);
                 $fileData = File::get(public_path('Image/Motorbike/' . $fileName));
                 Storage::disk('motorbike')->put($fileName, $fileData);
-                $imageUrls[] = Storage::disk('motorbike')->url($fileName);
+                $imageUrls[] = asset('Image/Motorbike/' . $fileName);
             }
 
             $moto->update([
