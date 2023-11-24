@@ -31,7 +31,7 @@ Route::get('verify/{token}', [AuthController::class, 'verifyToken']);
 
 // Reset password
 Route::post('reset-password', [ResetPasswordController::class, 'sendMail']);
-Route::put('reset-password/{token}', [ResetPasswordController::class,'resetPassword']);
+Route::post('change-password', [ResetPasswordController::class,'resetPassword']);
 
 // User
 Route::post('updateProfileUser', [UserController::class, 'updateProfileUser']);

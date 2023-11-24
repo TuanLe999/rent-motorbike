@@ -1,59 +1,120 @@
-// ForgotPassword.jsx
-import React, { useState } from 'react';
-import { Route, Link, BrowserRouter as Router } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import {
+    MDBBtn,
+    MDBContainer,
+    MDBRow,
+    MDBCol,
+    MDBCard,
+    MDBCardBody,
+    MDBInput,
+} from 'mdb-react-ui-kit';
+import classNames from 'classnames/bind';
+import styles from './ForgotPassword.module.scss';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
-const SendToken = ({ setTokenSent }) => {
-    const handleSendToken = () => {
-        // Gửi yêu cầu và xử lý khi thành công
-        // ...
+import * as userServices from '~/api/userServices';
 
-        // Đặt trạng thái đã gửi token thành công
-        setTokenSent(true);
+const cx = classNames.bind(styles);
+function ForgotPassword() {
+    const [token, setToken] = useState();
+    const [password, setPassword] = useState();
+    const [confirmPassword, setConfirmPassword] = useState();
+    const [errorMessage, setErrorMessage] = useState({
+        status: false,
+        text: '',
+    });
+    const navigate = useNavigate();
+
+    const checkPassword = () => {
+        return confirmPassword === password;
     };
 
-    return (
-        <div>
-            <h2>Send Token</h2>
-            <button onClick={handleSendToken}>Send Token</button>
-        </div>
-    );
-};
-
-const ChangePassword = ({ setTokenSent }) => {
-    const handleBack = () => {
-        // Đặt trạng thái đã gửi token thành công về false khi quay lại
-        setTokenSent(false);
+    const submit = async (e) => {
+        if (checkPassword()) {
+            e.preventDefault();
+            const res = await userServices.changePassword({ token, password });
+            if (res.type === 'success') {
+                navigate('/login');
+            } else {
+                setErrorMessage({
+                    status: true,
+                    text: 'Token không hợp lệ',
+                });
+            }
+        } else {
+            setErrorMessage({
+                status: true,
+                text: 'Mật khẩu không trùng khớp',
+            });
+        }
     };
-
     return (
-        <div>
-            <h2>Change Password</h2>
-            <button onClick={handleBack}>Back</button>
-        </div>
+        <MDBContainer fluid className='vh-100'>
+            <MDBRow className='d-flex justify-content-center align-items-center h-100'>
+                <MDBCol col='12'>
+                    <MDBCard
+                        className='bg-dark text-white my-5 mx-auto'
+                        style={{ borderRadius: '1rem', maxWidth: '400px' }}
+                    >
+                        <MDBCardBody className='p-5 d-flex flex-column align-items-center mx-auto w-100'>
+                            <h2 className='fw-bold mb-2 text-uppercase text-white'>
+                                Forgot Password
+                            </h2>
+
+                            <MDBInput
+                                wrapperClass='mb-5 mx-10 w-100 p-2'
+                                labelClass='text-white'
+                                label='Token'
+                                type='text'
+                                className={cx('input')}
+                                value={token}
+                                onChange={(e) => setToken(e.target.value)}
+                                size='lg'
+                            />
+                            <MDBInput
+                                wrapperClass='mb-5 mx-10 w-100 p-2'
+                                labelClass='text-white'
+                                label='Mật khẩu'
+                                type='password'
+                                className={cx('input')}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                size='lg'
+                            />
+                            <MDBInput
+                                wrapperClass='mb-5 mx-10 w-100 p-2'
+                                labelClass='text-white'
+                                label='Xác nhận mật khẩu'
+                                type='password'
+                                className={cx('input')}
+                                value={confirmPassword}
+                                onChange={(e) =>
+                                    setConfirmPassword(e.target.value)
+                                }
+                                size='lg'
+                            />
+                            {errorMessage.status && (
+                                <span className={cx('error')}>
+                                    {errorMessage.text}
+                                </span>
+                            )}
+                            <MDBBtn
+                                outline
+                                className='mx-2 px-5 mb-5 fw-bold'
+                                color='white'
+                                size='lg'
+                                style={{ color: '#ff3d13', fontSize: '16px' }}
+                                onClick={submit}
+                            >
+                                Thay đổi mật khẩu
+                            </MDBBtn>
+                        </MDBCardBody>
+                    </MDBCard>
+                </MDBCol>
+            </MDBRow>
+        </MDBContainer>
     );
-};
-
-const ForgotPassword = () => {
-    const [tokenSent, setTokenSent] = useState(false);
-
-    return (
-        <div>
-            <h1>Forgot Password</h1>
-            <ul>
-                <li>
-                    <Link to='/'>Send Token</Link>
-                </li>
-                <li>
-                    <Link to='/change-password'>Change Password</Link>
-                </li>
-            </ul>
-
-            <hr />
-
-            <SendToken setTokenSent={setTokenSent} />
-            <ChangePassword setTokenSent={setTokenSent} />
-        </div>
-    );
-};
+}
 
 export default ForgotPassword;

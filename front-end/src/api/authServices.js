@@ -34,3 +34,14 @@ export const verifyToken = async (token) => {
         console.log(e);
     }
 };
+
+export const sendToken = async (email) => {
+    try {
+        const res = await request.post('reset-password', {
+            email,
+        });
+        return res;
+    } catch (e) {
+        console.log(e);
+    }
+};

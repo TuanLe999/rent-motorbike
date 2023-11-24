@@ -50,6 +50,18 @@ export const updateAvatar = async (formData) => {
     }
 };
 
+export const changePassword = async ({ token, password }) => {
+    try {
+        const res = await request.post(`change-password`, {
+            password,
+            token,
+        });
+        return res;
+    } catch (e) {
+        console.log(e);
+    }
+};
+
 export const getAllUser = async ({ role = '', q = '', page = '' }) => {
     try {
         const res = await request.get('getAllUser', {

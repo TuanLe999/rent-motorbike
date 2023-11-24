@@ -40,7 +40,7 @@ function Login() {
                 }
                 localStorage.removeItem('previousPage');
             } else if (auth) {
-                navigate(-1);
+                navigate('/');
             }
         }
     }, [navigate, auth]);
@@ -91,12 +91,13 @@ function Login() {
                             />
 
                             <p className='small mb-3 pb-lg-2'>
-                                <a
+                                <Link
+                                    to='/sendToken'
                                     className='text-white-50'
-                                    href='/forgotPassword'
+                                    style={{ color: '#ff3d13' }}
                                 >
                                     Quên mật khẩu?
-                                </a>
+                                </Link>
                             </p>
                             <MDBBtn
                                 outline
