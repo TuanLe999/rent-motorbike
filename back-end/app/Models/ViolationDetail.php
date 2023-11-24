@@ -12,17 +12,18 @@ class ViolationDetail extends Model
     use HasFactory;
     protected $table = 'violation_details';
 
-    protected $primaryKey = ['violation_id',];
+    protected $primaryKey = 'violation_id';
 
     protected $fillable = [
         'violation_type_id',
+        'rental_detail_id',
         'note',
         'violation_cost',
     ];
 
     public function MotoRentalDetail()
     {
-        return $this->belongsTo(MotoRentalDetail::class,'violation_id','violation_id');
+        return $this->belongsTo(MotoRentalDetail::class,'rental_detail_id','rental_detail_id');
     }
 
     public function ViolationType()

@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Moto;
 use App\Models\MotoRental;
+use App\Models\MotoRentalDetail;
+use App\Models\ViolationDetail;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -58,7 +62,7 @@ class OrderController extends Controller
         ]);
     }
 
-    
+
     // Get order by id
     public function getOrderByIdUser($id_user, $trang_thai = null)
     {
@@ -139,6 +143,78 @@ class OrderController extends Controller
         } catch (\Exception $e) {
             // Xử lý nếu có lỗi kết nối
             return response()->json(['status' => 'error', 'message' => 'Lỗi kết nối cơ sở dữ liệu', 'data' => null]);
+        }
+    }
+
+
+    public function addOrder(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $data = $request->all();
+            $listMoto = $data["listMoto"];
+
+            $newRental = new MotoRental();
+            $newRental->customer_id = $data["id_customer"];
+            $newRental->status = 'Chưa duyệt';
+            $newRental->start_date = Carbon::createFromFormat('d-m-Y', $data["startDate"]);
+            $newRental->end_date = Carbon::createFromFormat('d-m-Y', $data["endDate"]);
+            $newRental->save();
+
+            foreach ($listMoto as $moto) {
+                $newRentalDetail = new MotoRentalDetail();
+                $newRentalDetail->rental_id = $newRental->rental_id;
+                $newRentalDetail->moto_id = $moto;
+                $newRentalDetail->rent_cost = Moto::find($moto)->rent_cost;
+                $newRentalDetail->return_date = null;
+                $newRentalDetail->received_staff_id = null;
+                $newRentalDetail->save();
+            }
+
+            DB::commit();
+            return $this->printRs("success", "Thuê xe thành công!", null, null);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->printRs("error", "Thuê xe thất bại, lỗi xảy ra trong quá trình thực hiện!", null, null);
+        }
+    }
+
+    public function payOrder(Request $request)
+    {
+        try {
+
+            $data = $request->all();
+            DB::beginTransaction();
+            foreach ($data['listMotos'] as $moto) {
+
+                $rentalDetail = MotoRentalDetail::where('rental_id', $data['rental_id'])->where('moto_id', $moto['moto_id'])->first();
+                if (!$rentalDetail) {
+                    DB::rollBack();
+                    return $this->printRs("error", "Không tìm thấy hóa đơn cần thanh toán!", $moto['moto_id'], null);
+                }
+                if ($rentalDetail->return_date != null) {
+                    DB::rollBack();
+                    return $this->printRs("error", "Xe đã được thanh toán!", $moto['moto_id'], null);
+                } else {
+                    $rentalDetail->received_staff_id = $data['received_staff_id'];
+                    $rentalDetail->return_date = Carbon::now();
+                    $rentalDetail->save();
+                    foreach ($moto['violation'] as $violation) {
+                        $newViolationDetail = new ViolationDetail();
+                        $newViolationDetail->rental_detail_id = $rentalDetail->rental_detail_id;
+                        $newViolationDetail->note = $violation['note'];
+                        $newViolationDetail->violation_cost = $violation['violation_cost'];
+                        $newViolationDetail->violation_type_id = $violation['violation_type_id'];
+                        $newViolationDetail->save();
+                    }
+                }
+            }
+            DB::commit();
+            return $this->printRs("success", "Thanh toán thành công", $data['listMotos'], null);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->printRs("error", "Thanh toán thất bại, lỗi xảy ra trong quá trình thực hiện!", null, null);
         }
     }
 }

@@ -13,13 +13,15 @@ class MotoRentalDetail extends Model
 
     protected $table = 'moto_rental_details';
 
-    protected $primaryKey = ['rental_id','moto_id'];
+    protected $primaryKey = 'rental_detail_id';
 
     protected $fillable = [
+        'rental_id',
+        'moto_id',
         'rent_cost',
         'return_date',
         'received_staff_id',
-        'violation_id', 
+
     ];
 
     public function Moto()
@@ -39,7 +41,7 @@ class MotoRentalDetail extends Model
 
     public function ViolationDetails()
     {
-        return $this->hasMany(ViolationDetail::class,'violation_id','violation_id');
+        return $this->hasMany(ViolationDetail::class,'rental_detail_id','rental_detail_id');
     }
 
 }
