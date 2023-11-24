@@ -2,7 +2,7 @@ import * as request from '~/utils/request';
 
 export const getAllXe = async (q) => {
     try {
-        const res = await request.get('getAllXe', {
+        const res = await request.get('moto', {
             params: {
                 q,
             },
@@ -65,9 +65,7 @@ export const updateXe = async (formData) => {
 
 export const getMotoBySlug = async (slug = '') => {
     try {
-        const res = await request.get(`getXe/${slug}`, {
-            withCredentials: true,
-        });
+        const res = await request.get(`admin/getMotorBySlug/${slug}`);
         return res.data;
     } catch (e) {
         console.log(e);

@@ -8,7 +8,7 @@ function CarItem({ data }) {
     return (
         <Link to={`/moto/${data.slug}`} className={cx('wrapper')}>
             <Image
-                src={`http://localhost:5000/${data?.hinhAnh[0]}` || ''}
+                // src={`http://localhost:5000/${data?.hinhAnh[0]}` || ''}
                 alt={data.tenXe}
                 className={cx('avatar')}
             />

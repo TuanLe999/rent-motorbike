@@ -14,7 +14,7 @@ function Moto(props) {
                                 <div className={cx('box-up')}>
                                     <img
                                         className={cx('img')}
-                                        src={`http://localhost:5000/${props.img[0]}`}
+                                        src={props.img[0]}
                                         alt=''
                                     />
                                     <div className={cx('img-info')}>

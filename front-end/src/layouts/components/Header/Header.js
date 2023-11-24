@@ -22,11 +22,13 @@ function Header() {
     const { auth } = useSelector((state) => state.auth);
     const { setIsOpen, cartItems } = useContext(CartContext);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleMenuChange = (menuItem) => {
         switch (menuItem.type) {
             case 'logout':
                 dispatch(authLogout());
+                navigate('/');
                 break;
             default:
                 break;
@@ -79,7 +81,7 @@ function Header() {
                             <Menu items={userMenu} onChange={handleMenuChange}>
                                 <Image
                                     className={cx('user-avatar')}
-                                    src={`http://localhost:5000/${auth.avatar}`}
+                                    src={auth.avatar}
                                     alt={'avatar'}
                                 />
                             </Menu>

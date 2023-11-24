@@ -1,29 +1,29 @@
 import * as request from '~/utils/request';
 
 export const updateProfile = async ({
-    maTaiKhoan,
+    user_id,
     email,
-    hoTen,
-    ngaySinh,
-    cccd,
-    sdt,
-    diaChi,
-    gioiTinh,
-    trangThai,
+    fullname,
+    dob,
+    card_id,
+    phone_number,
+    address,
+    gender,
+    status,
 }) => {
     try {
         const res = await request.post(
-            'updateInfoUser',
+            'updateProfileUser',
             {
-                maTaiKhoan,
+                user_id,
                 email,
-                hoTen,
-                ngaySinh,
-                cccd,
-                sdt,
-                diaChi,
-                gioiTinh,
-                trangThai,
+                fullname,
+                dob,
+                card_id,
+                phone_number,
+                address,
+                gender,
+                status,
             },
             {
                 headers: {
@@ -39,7 +39,7 @@ export const updateProfile = async ({
 
 export const updateAvatar = async (formData) => {
     try {
-        const res = await request.post('updateInfoUser', formData, {
+        const res = await request.post('updateAvatar', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },

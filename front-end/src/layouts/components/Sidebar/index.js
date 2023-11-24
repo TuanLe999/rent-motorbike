@@ -43,7 +43,7 @@ function Sidebar() {
                     </div>
                     <Image
                         className={cx('user-avatar')}
-                        src={`http://localhost:5000/${auth?.avatar}` || ''}
+                        // src={`http://localhost:5000/${auth?.avatar}` || ''}
                         alt={'avatar'}
                     />
                 </div>

@@ -17,8 +17,45 @@ class UserController extends Controller
         $user = User::where('user_id', $request->user_id)->first();
 
         $user->fullname = $request->fullname;
+        $user->dob = $request->dob;
         $user->gender = $request->gender;
         $user->address = $request->address;
+
+        if(!$user->card_id == $request->card_id) {
+            if(User::where('card_id', $request->card_id)->first()) {
+                return response()->json([
+                    'message' => 'CCCD already exist',
+                    'type' => 'error',
+                    'data' => $user
+                ]);
+            } else {
+                $user->card_id = $request->card_id;
+            }
+        }
+
+        if(!$user->phone_number == $request->phone_number) {
+            if(User::where('phone_number', $request->phone_number)->first()) {
+                return response()->json([
+                    'message' => 'Phone number already exist',
+                    'type' => 'error',
+                    'data' => $user
+                ]);
+            } else {
+                $user->phone_number = $request->phone_number;
+            }
+        }
+        
+        $user->update();
+
+        return response()->json([
+            'message' => 'Update profile user success',
+            'type' => 'success',
+            'data' => $user
+        ]);
+    }
+
+    public function updateAvatar(Request $request) {
+        $user = User::where('user_id', $request->user_id)->first();
 
         if($request->hasFile('avatar')) {
             // save file to public/Image/Avatar
@@ -30,33 +67,18 @@ class UserController extends Controller
             $filePath = 'Image/Avatar/' . $fileName;
             $fileData = File::get(public_path($filePath));
             Storage::disk('avatar')->put($fileName, $fileData);
-
             $storagePath = Storage::disk('avatar')->url($fileName);
             $user->avatar = $storagePath;
         }
-
-        if(User::where('card_id', $request->card_id)->first()) {
-            return response()->json([
-                'message' => 'CCCD already exist',
-            ]);
-        }
-
-        if(User::where('phone_number', $request->phone_number)->first()) {
-            return response()->json([
-                'message' => 'Phone number already exist',
-            ]);
-        }
-
-        $user->phone_number = $request->phone_number;
-        $user->card_id = $request->card_id;
+        
         $user->update();
 
         return response()->json([
             'message' => 'Update profile user success',
-            'user' => $user
+            'type'=> 'success',
+            'data' => $user
         ]);
     }
-
     public function lockAccount(Request $request)
     {
         $user = User::where('id', $request->id)->first();

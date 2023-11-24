@@ -284,10 +284,10 @@ function Account() {
                                 <td>
                                     <div className="d-flex align-items-center">
                                         <Image
-                                            src={
-                                                `http://localhost:5000/${item?.avatar}` ||
-                                                ""
-                                            }
+                                            // src={
+                                            //     `http://localhost:5000/${item?.avatar}` ||
+                                            //     ""
+                                            // }
                                             alt=""
                                             style={{
                                                 width: "45px",

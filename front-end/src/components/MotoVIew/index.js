@@ -24,8 +24,8 @@ function MotoView({ item }) {
 
     useEffect(() => {
         setProduct(item);
-        if (item?.hinhAnh?.length > 0) {
-            setPreviewImage(item.hinhAnh[0]);
+        if (item?.images?.length > 0) {
+            setPreviewImage(item.images[0]);
         }
         setDateMoto(item?.lich);
     }, [item, isOpen]);
@@ -79,7 +79,7 @@ function MotoView({ item }) {
                                         key={index}
                                     >
                                         <img
-                                            src={`http://localhost:5000/${img}`}
+                                            // src={`http://localhost:5000/${img}`}
                                             alt=''
                                         />
                                     </div>
@@ -89,7 +89,7 @@ function MotoView({ item }) {
                         <div className={cx('product__images__main')}>
                             {previewImage && (
                                 <img
-                                    src={`http://localhost:5000/${previewImage}`}
+                                    // src={`http://localhost:5000/${previewImage}`}
                                     alt=''
                                 />
                             )}
@@ -97,27 +97,27 @@ function MotoView({ item }) {
                     </div>
                     <div className={cx('product__info')}>
                         <h1 className={cx('product__info__title')}>
-                            {product?.tenXe}
+                            {product?.moto_name}
                         </h1>
 
                         <div className={cx('product__info__item')}>
                             <div className={cx('product__info__item__title')}>
-                                Loại xe: {product?.loaiXe}
+                                Loại xe: {product?.moto_type}
                             </div>
                         </div>
                         <div className={cx('product__info__item')}>
                             <div className={cx('product__info__item__title')}>
-                                Hãng xe: {product?.hangXe}
+                                Hãng xe: {product?.brand}
                             </div>
                         </div>
                         <div className={cx('product__info__item')}>
                             <div className={cx('product__info__item__title')}>
-                                Trạng thái: {product?.trangThai}
+                                Trạng thái: {product?.status}
                             </div>
                         </div>
                         <div className={cx('product__info__item')}>
                             <span className={cx('product__info__item__price')}>
-                                Giá: {product?.giaThue}.000 VNĐ / 1 ngày
+                                Giá: {product?.rent_cost}0 VNĐ / 1 ngày
                             </span>
                         </div>
                         <div className={cx('wrapper-date-picker')}>
@@ -148,10 +148,10 @@ function MotoView({ item }) {
                                 primary
                                 onClick={() =>
                                     addCartItem({
-                                        id: product.maXe,
-                                        image: product.hinhAnh[0],
-                                        name: product.tenXe,
-                                        price: product.giaThue,
+                                        id: product.moto_id,
+                                        image: product.images[0],
+                                        name: product.moto_name,
+                                        price: product.rent_cost,
                                         slug: product.slug,
                                         startDate: startDate,
                                         endDate: endDate,

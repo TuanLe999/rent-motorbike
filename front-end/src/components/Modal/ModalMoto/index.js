@@ -355,7 +355,7 @@ function ModalMoto() {
                                                             className={cx(
                                                                 'image'
                                                             )}
-                                                            src={`http://localhost:5000/${image}`}
+                                                            // src={`http://localhost:5000/${image}`}
                                                             alt=''
                                                             key={image}
                                                             width='200'

@@ -43,7 +43,7 @@ class MotoController extends Controller
         $motoInfo = $this->formatMotoData($moto);
         return response()->json([
             'status' => 'success',
-            'date' => $motoInfo
+            'data' => $motoInfo
         ]);
     }
 

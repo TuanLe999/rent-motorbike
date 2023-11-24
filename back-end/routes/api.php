@@ -35,6 +35,7 @@ Route::post('change-password', [ResetPasswordController::class,'resetPassword'])
 
 // User
 Route::post('updateProfileUser', [UserController::class, 'updateProfileUser']);
+Route::post('updateAvatar', [UserController::class, 'updateAvatar']);
 Route::post('lockAccount', [UserController::class,'lockAccount']);
 Route::get('getAllUser', [UserController::class, 'getAllUser']);
 
@@ -56,19 +57,19 @@ Route::get('/moto',[MotoController::class, 'GetAllMoto']);
 
 //Order
 
-Route:: get('/getAllOrder',[OrderController::class, 'getAllOrder']);
+Route::get('/getAllOrder',[OrderController::class, 'getAllOrder']);
 
-Route:: post('/addOrder', [OrderController::class, 'addOrder']);
+Route::post('/addOrder', [OrderController::class, 'addOrder']);
 
-Route:: get('/GetOrderByIdUser/{id_user}', [OrderController::class, 'GetOrderByIdUser']);
+Route::get('/GetOrderByIdUser/{id_user}', [OrderController::class, 'GetOrderByIdUser']);
 
-Route:: post('/payOrder', [OrderController::class, 'payOrder']);
+Route::post('/payOrder', [OrderController::class, 'payOrder']);
 
 
 //ROUTE ABOUT MOTOR
 Route:: prefix('/admin') -> group(function () {
-    Route:: get('/getAllMotorbike',[MotoController::class, 'getAllMoto'] );
-    Route:: get('/getMotorBySlug/{slug}', [MotoController::class, 'getMotorBySlug']);
-    Route:: post('/addMotorbike',[MotoController::class, 'createMoto'] );
-    Route:: post('/updateMotorbike/{moto_id}',[MotoController::class, 'updateMoto'] );
+    Route::get('/getAllMotorbike',[MotoController::class, 'getAllMoto']);
+    Route::get('/getMotorBySlug/{slug}', [MotoController::class, 'getMotorBySlug']);
+    Route::post('/addMotorbike',[MotoController::class, 'createMoto']);
+    Route::post('/updateMotorbike/{moto_id}',[MotoController::class, 'updateMoto']);
 });
