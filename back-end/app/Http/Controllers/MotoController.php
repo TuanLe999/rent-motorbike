@@ -39,6 +39,7 @@ class MotoController extends Controller
                 'description' => $moto->description,
                 'images' => $this->getImageUrls($moto->Images),
             ];
+            $motosInfo[] = $this->formatMotoData($moto);
         }
 
         return response()->json([
@@ -53,7 +54,7 @@ class MotoController extends Controller
         if (!$moto) {
             return response()->json(['error' => 'Moto not found'], 404);
         }
-        $motoInfo = $this->formatMotoData($moto);
+        $motoInfo = $this->formatMotoDataBySlug($moto);
         return response()->json([
             'status' => 'success',
             'data' => $motoInfo
@@ -122,9 +123,10 @@ class MotoController extends Controller
                 $fileName = time() . '.' . $image->getClientOriginalExtension();
                 $image->move(public_path('Image/Motorbike'), $fileName);
                 $fileData = File::get(public_path('Image/Motorbike/' . $fileName));
-                Storage::disk('motorbike')->put($fileName, $fileData);
+                Storage::disk('motorbike')->put($fileName, $fileData)
                 $storagePath = Storage::disk('motorbike')->url($fileName);
                 array_push($imageUrls, $storagePath);
+                $imageUrls[] = asset('Image/motorbike/' . $fileName);;
             }
 
             $moto->update([
@@ -158,6 +160,19 @@ class MotoController extends Controller
     }
 
 
+    //GET THE RENTAL TIME
+    private function getMotoCalendar($motoId) {
+        $result = Moto::select('motos.moto_id', 'moto_rentals.ngayBD', 'moto_rentals.ngayKT')
+            ->join('moto_rental_details', 'motos.moto_id', '=', 'moto_rental_details.moto_id')
+            ->join('moto_rentals', 'moto_rental_details.rental_id', '=', 'moto_rentals.rental_id')
+            ->where('motos.moto_id', $motoId)
+            ->whereDate('moto_rentals.ngayKT', '>', now())
+            ->get();
+
+        return $result;
+    }
+
+
     //FORMAT DATA FROM MOTORBIKE TO BE RETURNED TO UI
     private function formatMotoData($moto){
         return [
@@ -171,6 +186,22 @@ class MotoController extends Controller
             'slug' => $moto->slug,
             'description' => $moto->description,
             'images' => $this->getImageUrls($moto->Images),
+        ];
+    }
+
+
+    private function formatMotoDataBySlug($moto){
+        return [
+            'moto_name' => $moto->moto_name,
+            'brand' => $moto->brand,
+            'status' => $moto->status,
+            'moto_license_plates' => $moto->moto_license_plates,
+            'moto_type' => $moto->moto_type,
+            'rent_cost' => $moto->rent_cost,
+            'slug' => $moto->slug,
+            'description' => $moto->description,
+            'images' => $this->getImageUrls($moto->Images),
+            'calendar' => $this->getMotoCalendar($moto),
         ];
     }
 }
