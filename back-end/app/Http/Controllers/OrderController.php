@@ -69,7 +69,7 @@ class OrderController extends Controller
             return $item;
         });
 
-        return $this->printRs("SUCCESS", null, $new_data, true);
+        return $this->printRs("SUCCESS", null, $new_data, true,$soTrang);
     }
 
 
@@ -119,7 +119,7 @@ class OrderController extends Controller
 
 
 
-    private function printRs($status, $message, $data, $hasPagination)
+    private function printRs($status, $message, $data, $hasPagination,$totalPage = 1)
     {
         $response = [
             'status' => $status,
@@ -128,7 +128,7 @@ class OrderController extends Controller
         ];
 
         if ($hasPagination) {
-            $response['soTrang'] = 1; // Thay 1 bằng số trang thực tế nếu có
+            $response['totalPage'] = $totalPage; 
         }
 
         return response()->json($response);
