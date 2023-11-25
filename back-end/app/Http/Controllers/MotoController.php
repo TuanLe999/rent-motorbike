@@ -139,7 +139,11 @@ class MotoController extends Controller
     private function getMotoCalendar($moto_id) {
         $data = MotoRental::whereDate('end_date', '>', Carbon::now())
             ->whereHas('RentalDetails', function ($query) use ($moto_id) {
-                $query->where('moto_id', $moto_id);
+                $query->where('moto_id', $moto_id)
+                ->where(function ($subQuery) {
+                    $subQuery->where('status', 'active')
+                              ->orWhere('status', 'inactive');
+                });
             })
             ->select('start_date', 'end_date')
             ->get();
