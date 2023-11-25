@@ -32,7 +32,6 @@ function Home() {
                         title: 'Lỗi',
                         duration: 10000,
                     });
-
                     setTimeout(function () {
                         alert(
                             'Link gitHub: https://github.com/Viet-Truong/rent-moto-ui'
@@ -40,9 +39,8 @@ function Home() {
                     }, 10000);
                 });
         };
-
         fetch();
-    }, []);
+    }, [setDataMoto, setIsToastVisible]);
 
     return (
         <div className={cx('home')}>
@@ -74,9 +72,9 @@ function Home() {
                         return (
                             <figure key={index}>
                                 <Moto
-                                    img={item.hinhAnh}
-                                    name={item.tenXe}
-                                    price={item.giaThue}
+                                    img={item.images}
+                                    name={item.moto_name}
+                                    price={item.rent_cost}
                                     slug={item.slug}
                                 />
                             </figure>

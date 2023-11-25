@@ -43,7 +43,7 @@ function Sidebar() {
                     </div>
                     <Image
                         className={cx('user-avatar')}
-                        src={`http://localhost:5000/${auth?.avatar}` || ''}
+                        src={auth?.avatar || ''}
                         alt={'avatar'}
                     />
                 </div>
@@ -54,14 +54,14 @@ function Sidebar() {
                         </div>
                     </li>
                     <MenuItem
-                        disable={auth?.phanQuyen !== 'Admin'}
+                        disable={auth?.role !== 'Admin'}
                         title={'Quản lí tài khoản'}
                         to={config.routes.admin + '/managerAccount'}
                         icon={<FontAwesomeIcon icon={faUsers} />}
                         activeIcon={<FontAwesomeIcon icon={faUsers} />}
                     />
                     <MenuItem
-                        disable={auth?.phanQuyen !== 'Admin'}
+                        disable={auth?.role !== 'Admin'}
                         title={'Xe'}
                         to={config.routes.admin + '/updateInfoMoto'}
                         icon={<FontAwesomeIcon icon={faMotorcycle} />}
@@ -84,14 +84,14 @@ function Sidebar() {
                         </div>
                     </li>
                     <MenuItem
-                        disable={auth?.phanQuyen !== 'Nhân viên'}
+                        disable={auth?.role !== 'Nhân viên'}
                         title={'Duyệt đăng kí thuê xe'}
                         to={config.routes.admin + '/acceptRentMoto'}
                         icon={<FontAwesomeIcon icon={faCheckCircle} />}
                         activeIcon={<FontAwesomeIcon icon={faCheckCircle} />}
                     />
                     <MenuItem
-                        disable={auth?.phanQuyen !== 'Nhân viên'}
+                        disable={auth?.role !== 'Nhân viên'}
                         title={'Xác nhận trả xe'}
                         to={config.routes.admin + '/acceptReturnMoto'}
                         icon={<FontAwesomeIcon icon={faRotateLeft} />}

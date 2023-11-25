@@ -1,13 +1,15 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as authServices from '~/api/authServices';
+import { useNavigate } from 'react-router-dom';
 
 export const authRegister = createAsyncThunk(
     'authRegister',
-    async ({ username, password }, { rejectWithValue }) => {
+    async ({ email, password, fullname }, { rejectWithValue }) => {
         try {
             const auth = await authServices.register({
-                username,
+                email,
                 password,
+                fullname,
             });
             auth && localStorage.setItem('auth', JSON.stringify(auth));
             return auth;
@@ -23,10 +25,13 @@ export const authRegister = createAsyncThunk(
 
 export const authLogin = createAsyncThunk(
     'authLogin',
-    async ({ username, password }, { rejectWithValue }) => {
+    async ({ email, password }, { rejectWithValue }) => {
         try {
-            const auth = await authServices.login({ username, password });
+            const auth = await authServices.login({ email, password });
             auth && localStorage.setItem('auth', JSON.stringify(auth));
+            if (auth.type === 'verify') {
+                return auth;
+            }
             return auth.data;
         } catch (error) {
             if (error.response && error.response.data.message) {

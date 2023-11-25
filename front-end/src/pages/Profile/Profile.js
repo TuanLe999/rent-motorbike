@@ -29,9 +29,7 @@ function Avatar() {
     const [selectedImage, setSelectedImage] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
-    const [avatarUrl, setAvatarUrl] = useState(
-        `http://localhost:5000/${auth?.avatar}` || ''
-    );
+    const [avatarUrl, setAvatarUrl] = useState(auth.avatar || '');
     const { setIsToastVisible } = useContext(AppContext);
     const formDataRef = useRef(new FormData());
 
@@ -67,14 +65,14 @@ function Avatar() {
     const handleSave = async () => {
         // Call your API to save the selected image
         // ...
-        formDataRef.current.append('maTaiKhoan', auth.maTaiKhoan);
+        formDataRef.current.append('user_id', auth.user_id);
         console.log(formDataToJSON(formDataRef.current));
         try {
             const result = await userServices.updateAvatar(formDataRef.current);
             // Cập nhật dữ liệu mới vào localStorage
             localStorage.setItem('auth', JSON.stringify(result));
-            if (result.status === 'success') {
-                setAvatarUrl(`http://localhost:5000/${result.data.avatar}`);
+            if (result.type === 'success') {
+                setAvatarUrl(result.data.avatar);
                 setIsToastVisible({
                     type: 'success',
                     message: 'Đã cập nhật thông tin thành công',
@@ -155,6 +153,7 @@ function Avatar() {
 }
 
 function ProfileField({ label, value, editing, onEdit, onChange }) {
+    const isEmailField = label.toLowerCase() === 'email';
     return (
         <MDBRow>
             <MDBCol sm='3'>
@@ -173,7 +172,9 @@ function ProfileField({ label, value, editing, onEdit, onChange }) {
                 )}
             </MDBCol>
             <MDBCol sm='1'>
-                {!editing && <FontAwesomeIcon icon={faPen} onClick={onEdit} />}
+                {!isEmailField && !editing && (
+                    <FontAwesomeIcon icon={faPen} onClick={onEdit} />
+                )}
             </MDBCol>
         </MDBRow>
     );
@@ -182,17 +183,14 @@ function ProfileField({ label, value, editing, onEdit, onChange }) {
 function Profile() {
     const { auth } = useSelector((state) => state.auth);
     const [profile, setProfile] = useState({
-        hoTen: auth?.hoTen,
+        fullname: auth?.fullname,
         email: auth?.email,
-        ngaySinh: auth?.ngaySinh,
-        gioiTinh: auth?.gioiTinh,
-        sdt: auth?.sdt,
-        cccd: auth?.cccd,
-        diaChi: auth?.diaChi,
+        dob: auth?.dob,
+        gender: auth?.gender,
+        phone_number: auth?.phone_number,
+        card_id: auth?.card_id,
+        address: auth?.address,
     });
-    // const [toast, setToast] = useState({
-    //     open: false,
-    // });
 
     const { isToastVisible, setIsToastVisible } = useContext(AppContext);
 
@@ -211,30 +209,28 @@ function Profile() {
     };
 
     const handleSaveClick = async (
-        maTaiKhoan,
-        email,
-        hoTen,
-        ngaySinh,
-        cccd,
-        sdt,
-        diaChi,
-        gioiTinh
+        user_id,
+        fullname,
+        dob,
+        card_id,
+        phone_number,
+        address,
+        gender
     ) => {
         // Thực hiện lưu các thay đổi vào cơ sở dữ liệu hoặc nơi lưu trữ phù hợp
         try {
             const result = await userServices.updateProfile({
-                maTaiKhoan,
-                email,
-                hoTen,
-                ngaySinh,
-                cccd,
-                sdt,
-                diaChi,
-                gioiTinh,
+                user_id,
+                fullname,
+                dob,
+                card_id,
+                phone_number,
+                address,
+                gender,
             });
             // Cập nhật dữ liệu mới vào localStorage
             localStorage.setItem('auth', JSON.stringify(result));
-            if (result.status === 'success') {
+            if (result.type === 'success') {
                 setIsToastVisible({
                     type: 'success',
                     message: 'Đã cập nhật thông tin thành công',
@@ -249,7 +245,6 @@ function Profile() {
                     open: true,
                 });
             }
-            console.log(result);
         } catch (error) {
             // Xử lý lỗi nếu cần
             setIsToastVisible({
@@ -264,11 +259,11 @@ function Profile() {
     };
 
     const onChangeDate = (date, dateString) => {
-        setProfile({ ...profile, ngaySinh: dateString });
+        setProfile({ ...profile, dob: dateString });
     };
 
     const handleGenderChange = (e) => {
-        setProfile({ ...profile, gioiTinh: e.target.value });
+        setProfile({ ...profile, dob: e.target.value });
     };
 
     return (
@@ -301,17 +296,15 @@ function Profile() {
                             <MDBCardBody>
                                 <ProfileField
                                     label='Họ và tên'
-                                    value={profile?.hoTen}
-                                    editing={editingField === 'hoTen'}
-                                    onEdit={() => handleEditClick('hoTen')}
+                                    value={profile?.fullname}
+                                    editing={editingField === 'fullname'}
+                                    onEdit={() => handleEditClick('fullname')}
                                     onChange={handleInputChange}
                                 />
                                 <hr />
                                 <ProfileField
                                     label='Email'
                                     value={profile?.email}
-                                    editing={editingField === 'email'}
-                                    onEdit={() => handleEditClick('email')}
                                     onChange={handleInputChange}
                                 />
                                 <hr />
@@ -323,22 +316,18 @@ function Profile() {
                                     <MDBCol sm='8'>
                                         <DatePicker
                                             className={cx('input')}
-                                            defaultValue={moment(
-                                                profile?.ngaySinh
-                                            )}
-                                            format={'DD/MM/YYYY'}
+                                            defaultValue={moment(profile?.dob)}
+                                            format={'YYYY/MM/DD'}
                                             onChange={onChangeDate}
-                                            disabled={
-                                                editingField !== 'ngaySinh'
-                                            }
+                                            disabled={editingField !== 'dob'}
                                         />
                                     </MDBCol>
                                     <MDBCol sm='1'>
-                                        {editingField !== 'ngaySinh' && (
+                                        {editingField !== 'dob' && (
                                             <FontAwesomeIcon
                                                 icon={faPen}
                                                 onClick={() =>
-                                                    handleEditClick('ngaySinh')
+                                                    handleEditClick('dob')
                                                 }
                                             />
                                         )}
@@ -353,11 +342,9 @@ function Profile() {
                                     </MDBCol>
                                     <MDBCol sm='8'>
                                         <select
-                                            defaultValue={profile?.gioiTinh}
+                                            defaultValue={profile?.gender}
                                             onChange={handleGenderChange}
-                                            disabled={
-                                                editingField !== 'gioiTinh'
-                                            }
+                                            disabled={editingField !== 'gender'}
                                         >
                                             <option value='M'>Nam</option>
                                             <option value='W'>Nữ</option>
@@ -365,11 +352,11 @@ function Profile() {
                                         </select>
                                     </MDBCol>
                                     <MDBCol sm='1'>
-                                        {editingField !== 'gioiTinh' && (
+                                        {editingField !== 'gender' && (
                                             <FontAwesomeIcon
                                                 icon={faPen}
                                                 onClick={() =>
-                                                    handleEditClick('gioiTinh')
+                                                    handleEditClick('gender')
                                                 }
                                             />
                                         )}
@@ -380,48 +367,49 @@ function Profile() {
 
                                 <ProfileField
                                     label='Số điện thoại'
-                                    value={profile?.sdt}
-                                    editing={editingField === 'sdt'}
-                                    onEdit={() => handleEditClick('sdt')}
+                                    value={profile?.phone_number}
+                                    editing={editingField === 'phone_number'}
+                                    onEdit={() =>
+                                        handleEditClick('phone_number')
+                                    }
                                     onChange={handleInputChange}
                                 />
                                 <hr />
                                 <ProfileField
                                     label='CCCD'
-                                    value={profile?.cccd}
-                                    editing={editingField === 'cccd'}
-                                    onEdit={() => handleEditClick('cccd')}
+                                    value={profile?.card_id}
+                                    editing={editingField === 'card_id'}
+                                    onEdit={() => handleEditClick('card_id')}
                                     onChange={handleInputChange}
                                 />
                                 <hr />
                                 <ProfileField
                                     label='Địa chỉ'
-                                    value={profile?.diaChi}
-                                    editing={editingField === 'diaChi'}
-                                    onEdit={() => handleEditClick('diaChi')}
+                                    value={profile?.address}
+                                    editing={editingField === 'address'}
+                                    onEdit={() => handleEditClick('address')}
                                     onChange={handleInputChange}
                                 />
                                 <hr />
                             </MDBCardBody>
                             {editingField && (
                                 <MDBCardBody>
-                                    <button
-                                        className='btn btn-primary p-3 text-xl-center'
+                                    <Button
+                                        primary
                                         onClick={() =>
                                             handleSaveClick(
-                                                auth.maTaiKhoan,
-                                                profile.email,
-                                                profile.hoTen,
-                                                profile.ngaySinh,
-                                                profile.cccd,
-                                                profile.sdt,
-                                                profile.diaChi,
-                                                profile.gioiTinh
+                                                auth.user_id,
+                                                profile.fullname,
+                                                profile.dob,
+                                                profile.card_id,
+                                                profile.phone_number,
+                                                profile.address,
+                                                profile.gender
                                             )
                                         }
                                     >
                                         Lưu
-                                    </button>
+                                    </Button>
                                 </MDBCardBody>
                             )}
                         </MDBCard>

@@ -34,31 +34,33 @@ function ModalMoto() {
         setIsModalMotoVisible,
         setIsToastVisible,
     } = useContext(AppContext);
-    const [idMoto, setIdMoto] = useState(data?.maXe ?? '');
-    const [nameMoto, setNameMoto] = useState(data?.tenXe ?? '');
-    const [autoMaker, setAutoMaker] = useState(data?.hangXe ?? '');
-    const [price, setPrice] = useState(data?.giaThue ?? '');
-    const [type, setType] = useState(data?.loaiXe ?? '');
-    const [licensePlates, setLicensePlates] = useState(data?.bienSoXe ?? '');
-    const [status, setStatus] = useState(data?.trangThai ?? '');
-    const [description, setDescription] = useState(data?.moTa ?? '');
+    const [idMoto, setIdMoto] = useState(data?.moto_id ?? '');
+    const [nameMoto, setNameMoto] = useState(data?.moto_name ?? '');
+    const [autoMaker, setAutoMaker] = useState(data?.brand ?? '');
+    const [price, setPrice] = useState(data?.rent_cost ?? '');
+    const [type, setType] = useState(data?.moto_type ?? '');
+    const [licensePlates, setLicensePlates] = useState(
+        data?.moto_license_plates ?? ''
+    );
+    const [status, setStatus] = useState(data?.status ?? '');
+    const [description, setDescription] = useState(data?.description ?? '');
     const [slug, setSlug] = useState(data?.slug ?? '');
-    const [hinhAnh, setHinhAnh] = useState(data?.hinhAnh ?? []);
-    const [multipleImages, setMultipleImages] = useState(data?.hinhAnh ?? []);
+    const [hinhAnh, setHinhAnh] = useState(data?.images ?? []);
+    const [multipleImages, setMultipleImages] = useState(data?.images ?? []);
     const formDataRef = useRef(new FormData());
 
     useEffect(() => {
-        setIdMoto(data?.idMoto ?? '');
-        setNameMoto(data?.tenXe ?? '');
-        setAutoMaker(data?.hangXe ?? '');
-        setPrice(data?.giaThue ?? '');
-        setType(data?.loaiXe ?? '');
-        setLicensePlates(data?.bienSoXe ?? '');
-        setHinhAnh(data?.hinhAnh ?? '');
-        setStatus(data?.trangThai ?? '');
-        setDescription(data?.moTa ?? '');
+        setIdMoto(data?.moto_id ?? '');
+        setNameMoto(data?.moto_name ?? '');
+        setAutoMaker(data?.brand ?? '');
+        setPrice(data?.rent_cost ?? '');
+        setType(data?.moto_type ?? '');
+        setLicensePlates(data?.moto_license_plates ?? '');
+        setHinhAnh(data?.images ?? '');
+        setStatus(data?.status ?? '');
+        setDescription(data?.description ?? '');
         setSlug(data?.slug ?? '');
-        setMultipleImages(data?.hinhAnh ?? []);
+        setMultipleImages(data?.images ?? []);
     }, [data]);
 
     const changeMultipleFiles = (e) => {
@@ -94,20 +96,20 @@ function ModalMoto() {
         event.preventDefault();
 
         if (typeModal !== 'ADD') {
-            formDataRef.current.append('maXe', data?.maXe);
+            formDataRef.current.append('moto_id', data?.moto_id);
         }
 
-        formDataRef.current.append('tenXe', nameMoto);
-        formDataRef.current.append('hangXe', autoMaker);
-        formDataRef.current.append('bienSoXe', licensePlates);
-        formDataRef.current.append('loaiXe', type);
-        formDataRef.current.append('giaThue', price);
-        formDataRef.current.append('trangThai', status);
-        formDataRef.current.append('moTa', description);
+        formDataRef.current.append('moto_name', nameMoto);
+        formDataRef.current.append('brand', autoMaker);
+        formDataRef.current.append('moto_license_plates', licensePlates);
+        formDataRef.current.append('moto_type', type);
+        formDataRef.current.append('rent_cost', price);
+        formDataRef.current.append('status', status);
+        formDataRef.current.append('description', description);
         formDataRef.current.append('slug', slug);
         console.log(hinhAnh);
         for (let i = 0; i < hinhAnh.length; i++) {
-            formDataRef.current.append('images', hinhAnh[i]);
+            formDataRef.current.append('images[]', hinhAnh[i]);
             console.log(i);
         }
 
@@ -355,7 +357,7 @@ function ModalMoto() {
                                                             className={cx(
                                                                 'image'
                                                             )}
-                                                            src={`http://localhost:5000/${image}`}
+                                                            src={image}
                                                             alt=''
                                                             key={image}
                                                             width='200'

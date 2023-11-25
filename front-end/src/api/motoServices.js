@@ -2,10 +2,8 @@ import * as request from '~/utils/request';
 
 export const getAllXe = async (q) => {
     try {
-        const res = await request.get('getAllXe', {
-            params: {
-                q,
-            },
+        const res = await request.post('moto', {
+            q,
         });
         return res;
     } catch (e) {
@@ -15,12 +13,10 @@ export const getAllXe = async (q) => {
 
 export const getAllXeAdmin = async ({ q = null, page = '', type = '' }) => {
     try {
-        const res = await request.get('getAllXeAdmin', {
-            params: {
-                q,
-                page,
-                type,
-            },
+        const res = await request.post('moto', {
+            q,
+            page,
+            type,
         });
         return res;
     } catch (e) {
@@ -30,8 +26,8 @@ export const getAllXeAdmin = async ({ q = null, page = '', type = '' }) => {
 
 export const thongKeXe = async () => {
     try {
-        const res = await request.get('thongkeXe');
-        return JSON.parse(res);
+        const res = await request.get('statisticMoto');
+        return res;
     } catch (e) {
         console.log(e);
     }
@@ -39,7 +35,7 @@ export const thongKeXe = async () => {
 
 export const addXe = async (formData) => {
     try {
-        const res = await request.post('addXe', formData, {
+        const res = await request.post('admin/addMotorbike', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -65,9 +61,7 @@ export const updateXe = async (formData) => {
 
 export const getMotoBySlug = async (slug = '') => {
     try {
-        const res = await request.get(`getXe/${slug}`, {
-            withCredentials: true,
-        });
+        const res = await request.get(`admin/getMotorBySlug/${slug}`);
         return res.data;
     } catch (e) {
         console.log(e);

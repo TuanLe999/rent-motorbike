@@ -1,15 +1,15 @@
-import classNames from "classnames/bind";
-import styles from "./AcceptMoto.module.scss";
+import classNames from 'classnames/bind';
+import styles from './AcceptMoto.module.scss';
 import {
     MDBBadge,
     MDBBtn,
     MDBTable,
     MDBTableHead,
     MDBTableBody,
-} from "mdb-react-ui-kit";
-import { useState, useEffect, useContext, useRef } from "react";
+} from 'mdb-react-ui-kit';
+import { useState, useEffect, useContext, useRef } from 'react';
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faPen,
     faCheckCircle,
@@ -21,14 +21,14 @@ import {
     faCircleXmark,
     faMagnifyingGlass,
     faSpinner,
-} from "@fortawesome/free-solid-svg-icons";
+} from '@fortawesome/free-solid-svg-icons';
 
-import useDebounce from "~/hooks/useDebounce";
-import { AppContext } from "~/Context/AppContext";
-import ModalHandleRentMoto from "~/components/Modal/ModalHandleRentMoto";
-import Policy from "~/components/Policy";
-import Toast from "~/components/Toast";
-import * as adminServices from "~/api/adminServices";
+import useDebounce from '~/hooks/useDebounce';
+import { AppContext } from '~/Context/AppContext';
+import ModalHandleRentMoto from '~/components/Modal/ModalHandleRentMoto';
+import Policy from '~/components/Policy';
+import Toast from '~/components/Toast';
+import * as adminServices from '~/api/adminServices';
 
 const cx = classNames.bind(styles);
 const PAGE = 1;
@@ -46,22 +46,22 @@ function AcceptMoto() {
     const [totalPage, setTotalPage] = useState();
     const [pageNumber, setPageNumber] = useState(PAGE);
     const [dash, setDash] = useState();
-    const [selectedOption, setSelectedOption] = useState("DF");
+    const [selectedOption, setSelectedOption] = useState('DF');
 
     // Search
     const inputRef = useRef();
-    const [searchValue, setSearchValue] = useState("");
+    const [searchValue, setSearchValue] = useState('');
     const [loading, setLoading] = useState(false);
 
     const debouncedValue = useDebounce(searchValue, 500);
     const handleClear = () => {
-        setSearchValue("");
+        setSearchValue('');
         inputRef.current.focus();
     };
 
     const handleChangeInput = (e) => {
         const searchValue = e.target.value;
-        if (!searchValue.startsWith(" ")) {
+        if (!searchValue.startsWith(' ')) {
             setSearchValue(searchValue);
         }
     };
@@ -69,82 +69,82 @@ function AcceptMoto() {
     useEffect(() => {
         const thongKe = async () => {
             const result = await adminServices.thongKeRent();
-            setDash(result);
+            setDash(result.order);
         };
         thongKe();
 
         if (!debouncedValue.trim()) {
-            if (selectedOption === "DF") {
+            if (selectedOption === 'DF') {
                 fetchData();
-            } else if (selectedOption === "Accepted") {
-                fetchDataAccepted();
-            } else if (selectedOption === "UnAccepted") {
-                fetchDataUnAccepted();
+            } else if (selectedOption === 'Accepted') {
+                fetchData();
+            } else if (selectedOption === 'UnAccepted') {
+                fetchData();
             }
         }
         // call API
-        if (selectedOption === "DF") {
+        if (selectedOption === 'DF') {
             const fetch = async () => {
                 setLoading(true);
                 fetchData(debouncedValue);
                 setLoading(false);
             };
             fetch();
-        } else if (selectedOption === "Accepted") {
+        } else if (selectedOption === 'Accepted') {
             const fetch = async () => {
                 setLoading(true);
-                fetchDataAccepted(debouncedValue);
+                fetchData(debouncedValue);
                 setLoading(false);
             };
             fetch();
         } else {
             const fetch = async () => {
                 setLoading(true);
-                fetchDataUnAccepted(debouncedValue);
+                fetchData(debouncedValue);
                 setLoading(false);
             };
             fetch();
         }
-    }, [pageNumber, isModalRentVisible]);
+    }, [pageNumber, isModalRentVisible, debouncedValue]);
 
-    const fetchData = async (debouncedValue = "") => {
+    const fetchData = async (debouncedValue = '') => {
         const result = await adminServices.getAllOrder({
             q: debouncedValue,
             page: pageNumber,
         });
         setDataRentMoto(result.data);
-        setTotalPage(result.soTrang);
+        setTotalPage(result.totalPages);
     };
 
-    const fetchDataAccepted = async (debouncedValue = "") => {
-        const result = await adminServices.getAllOrderAccepted({
-            q: debouncedValue,
-            page: 1,
-        });
-        setDataRentMoto(result.data);
-        setTotalPage(result.soTrang);
-    };
+    // const fetchDataAccepted = async (debouncedValue = '') => {
+    //     const result = await adminServices.getAllOrderAccepted({
+    //         q: debouncedValue,
+    //         page: 1,
+    //     });
+    //     setDataRentMoto(result.data);
+    //     setTotalPage(result.soTrang);
+    // };
 
-    const fetchDataUnAccepted = async (debouncedValue = "") => {
-        const result = await adminServices.getAllOrderUnAccepted({
-            q: debouncedValue,
-            page: 1,
-        });
-        setDataRentMoto(result.data);
-        setTotalPage(result.soTrang);
-    };
+    // const fetchDataUnAccepted = async (debouncedValue = '') => {
+    //     const result = await adminServices.getAllOrderUnAccepted({
+    //         q: debouncedValue,
+    //         page: 1,
+    //     });
+    //     setDataRentMoto(result.data);
+    //     setTotalPage(result.soTrang);
+    // };
 
     const handleChange = (event) => {
         const selectedValue = event.target.value;
         setSelectedOption(selectedValue);
 
         // Gọi API tương ứng với giá trị đã chọn
-        if (selectedValue === "DF") {
+        if (selectedValue === 'DF') {
             fetchData();
-        } else if (selectedValue === "Accepted") {
-            fetchDataAccepted();
-        } else if (selectedValue === "UnAccepted") {
-            fetchDataUnAccepted();
+        } else if (selectedValue === 'Accepted') {
+            fetchData();
+        } else if (selectedValue === 'UnAccepted') {
+            fetchData();
         }
     };
 
@@ -158,51 +158,51 @@ function AcceptMoto() {
     };
 
     return (
-        <div className={cx("wrapper")}>
+        <div className={cx('wrapper')}>
             <ModalHandleRentMoto />
-            <h1 className={cx("header")}>
+            <h1 className={cx('header')}>
                 <FontAwesomeIcon
                     icon={faCheckCircle}
-                    className={cx("header-icon")}
+                    className={cx('header-icon')}
                 />
                 Duyệt đăng kí thuê xe
             </h1>
-            <div className={cx("wrapper-policy")}>
+            <div className={cx('wrapper-policy')}>
                 <Policy
                     icon={<FontAwesomeIcon icon={faDatabase} />}
-                    name={"Tổng đơn đăng kí"}
-                    value={dash?.TongSoDangKyThueXe}
+                    name={'Tổng đơn đăng kí'}
+                    value={dash?.totalOrder}
                 />
                 <Policy
                     icon={<FontAwesomeIcon icon={faCheckCircle} />}
-                    name={"Số đơn đã duyệt"}
-                    value={dash?.TongSoDangKyThueXeDaDuyet}
+                    name={'Số đơn đã duyệt'}
+                    value={dash?.totalOrderConfirmed}
                 />
                 <Policy
                     icon={<FontAwesomeIcon icon={faExclamation} />}
-                    name={"Số đơn chưa duyệt"}
-                    value={dash?.TongSoDangKyThueXeChuaDuyet}
+                    name={'Số đơn chưa duyệt'}
+                    value={dash?.totalOrderReturned}
                 />
                 <Policy
                     icon={<FontAwesomeIcon icon={faMoneyBill} />}
-                    name={"Tổng tiền"}
-                    value={`${dash?.TongTienDangKyThueXe}.000 VND`}
+                    name={'Tổng tiền'}
+                    value={`${dash?.totalMoney}.000 VND`}
                 />
             </div>
-            <div className={cx("action-table")}>
+            <div className={cx('action-table')}>
                 {/* <Search /> */}
                 <div>
-                    <div className={cx("search")}>
+                    <div className={cx('search')}>
                         <input
                             value={searchValue}
-                            placeholder="Tìm kiếm"
-                            type="text"
+                            placeholder='Tìm kiếm'
+                            type='text'
                             spellCheck={false}
                             onChange={handleChangeInput}
                         />
                         {!!searchValue && !loading && (
                             <button
-                                className={cx("clear")}
+                                className={cx('clear')}
                                 onClick={handleClear}
                             >
                                 <FontAwesomeIcon icon={faCircleXmark} />
@@ -210,12 +210,12 @@ function AcceptMoto() {
                         )}
                         {loading && (
                             <FontAwesomeIcon
-                                className={cx("loading")}
+                                className={cx('loading')}
                                 icon={faSpinner}
                             />
                         )}
                         <button
-                            className={cx("search-btn")}
+                            className={cx('search-btn')}
                             onMouseDown={(e) => e.preventDefault()}
                         >
                             <FontAwesomeIcon icon={faMagnifyingGlass} on />
@@ -225,105 +225,105 @@ function AcceptMoto() {
                 <div>
                     <div>
                         <select
-                            className={cx("select")}
+                            className={cx('select')}
                             onChange={handleChange}
                         >
-                            <option value="DF">Mặc định</option>
-                            <option value="Accepted">Đã duyệt</option>
-                            <option value="UnAccepted">Chưa duyệt</option>
+                            <option value='DF'>Mặc định</option>
+                            <option value='Accepted'>Đã duyệt</option>
+                            <option value='UnAccepted'>Chưa duyệt</option>
                         </select>
                     </div>
                 </div>
             </div>
-            <MDBTable align="middle" className={cx("table")}>
+            <MDBTable align='middle' className={cx('table')}>
                 <MDBTableHead>
                     <tr>
-                        <th scope="col">Mã đơn thuê</th>
-                        <th scope="col">Tên khách hàng</th>
-                        <th scope="col">Ngày bắt đầu</th>
-                        <th scope="col">Ngày kết thúc</th>
-                        <th scope="col">Trạng thái</th>
-                        <th scope="col">Nhân viên duyệt</th>
-                        <th scope="col">Giá thuê</th>
-                        <th scope="col">Actions</th>
+                        <th scope='col'>Mã đơn thuê</th>
+                        <th scope='col'>Tên khách hàng</th>
+                        <th scope='col'>Ngày bắt đầu</th>
+                        <th scope='col'>Ngày kết thúc</th>
+                        <th scope='col'>Trạng thái</th>
+                        <th scope='col'>Nhân viên duyệt</th>
+                        <th scope='col'>Giá thuê</th>
+                        <th scope='col'>Actions</th>
                     </tr>
                 </MDBTableHead>
                 <MDBTableBody>
                     {dataRentMoto?.map((item, index) => {
                         return (
                             <tr
-                                style={{ cursor: "pointer" }}
+                                style={{ cursor: 'pointer' }}
                                 key={index}
                                 onClick={() => {
                                     setIsModalRentVisible(true);
-                                    setTypeModal("ACCEPT");
+                                    setTypeModal('ACCEPT');
                                     setData(item);
                                 }}
                             >
                                 <td>
-                                    <p className="fw-bold mb-1">
+                                    <p className='fw-bold mb-1'>
                                         {item.maThue}
                                     </p>
                                 </td>
                                 <td>
-                                    <div className="ms-3">
-                                        <p className="fw-bold mb-1">
+                                    <div className='ms-3'>
+                                        <p className='fw-bold mb-1'>
                                             {item.hoTen}
                                         </p>
                                     </div>
                                 </td>
                                 <td>
-                                    <p className="fw-normal mb-1">
+                                    <p className='fw-normal mb-1'>
                                         {item.ngayBD}
                                     </p>
                                 </td>
                                 <td>
-                                    <p className="fw-bold mb-1">
+                                    <p className='fw-bold mb-1'>
                                         {item.ngayKT}
                                     </p>
                                 </td>
                                 <td>
-                                    {item.trangThai == "Đã duyệt" ? (
+                                    {item.trangThai == 'Đã duyệt' ? (
                                         <MDBBadge
-                                            color="success"
+                                            color='success'
                                             pill
-                                            className="fw-bold mb-1"
+                                            className='fw-bold mb-1'
                                         >
                                             {item.trangThai}
                                         </MDBBadge>
                                     ) : (
                                         <MDBBadge
-                                            color="danger"
+                                            color='danger'
                                             pill
-                                            className="fw-bold mb-1"
+                                            className='fw-bold mb-1'
                                         >
                                             {item.trangThai}
                                         </MDBBadge>
                                     )}
                                 </td>
                                 <td>
-                                    <p className="fw-bold mb-1">
+                                    <p className='fw-bold mb-1'>
                                         {item.maNVDuyet}
                                     </p>
                                 </td>
                                 <td>
-                                    <p className="fw-bold mb-1">
+                                    <p className='fw-bold mb-1'>
                                         {handleTotalOneRent(item)}.000
                                     </p>
                                 </td>
                                 <td>
                                     <MDBBtn
-                                        color="link"
+                                        color='link'
                                         rounded
-                                        size="sm"
-                                        className="fw-bold mb-1"
+                                        size='sm'
+                                        className='fw-bold mb-1'
                                     >
                                         <FontAwesomeIcon
                                             icon={faPen}
-                                            className={cx("actions-btn")}
+                                            className={cx('actions-btn')}
                                             onClick={() => {
                                                 setIsModalRentVisible(true);
-                                                setTypeModal("ACCEPT");
+                                                setTypeModal('ACCEPT');
                                                 setData(item);
                                             }}
                                         />
@@ -334,22 +334,22 @@ function AcceptMoto() {
                     })}
                 </MDBTableBody>
             </MDBTable>
-            <nav aria-label="..." className={cx("page_navigation")}>
+            <nav aria-label='...' className={cx('page_navigation')}>
                 <button
-                    className={cx("btn-nav", "left-btn")}
+                    className={cx('btn-nav', 'left-btn')}
                     onClick={() => {
                         if (pageNumber > 1) setPageNumber((prev) => prev - 1);
                     }}
                 >
                     <FontAwesomeIcon icon={faAngleLeft} />
                 </button>
-                <div className={cx("page-numbers")}>
+                <div className={cx('page-numbers')}>
                     {Array.from({ length: totalPage }, (_, i) => i + 1).map(
                         (page) => (
                             <button
                                 className={cx(
-                                    "btn-page",
-                                    pageNumber == page ? "btn-selected" : ""
+                                    'btn-page',
+                                    pageNumber == page ? 'btn-selected' : ''
                                 )}
                                 onClick={() => setPageNumber(page)}
                                 key={page}
@@ -360,7 +360,7 @@ function AcceptMoto() {
                     )}
                 </div>
                 <button
-                    className={cx("btn-nav", "right-btn")}
+                    className={cx('btn-nav', 'right-btn')}
                     onClick={() => {
                         if (pageNumber < totalPage) {
                             setPageNumber((prev) => prev + 1);

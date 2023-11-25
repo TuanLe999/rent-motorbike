@@ -16,8 +16,8 @@ export const getAllOrder = async ({ page, q = '' }) => {
 
 export const thongKeRent = async () => {
     try {
-        const res = await request.get('thongkeRent');
-        return JSON.parse(res);
+        const res = await request.get('statisticOrder');
+        return res;
     } catch (e) {
         console.log(e);
     }

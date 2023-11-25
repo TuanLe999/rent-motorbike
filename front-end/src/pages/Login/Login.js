@@ -17,38 +17,37 @@ import { authLogin } from '~/redux/authAction';
 
 const cx = classNames.bind(styles);
 function Login() {
-    const [username, setUsername] = useState();
+    const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const { auth } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     useEffect(() => {
-        // if (auth) {
-        //     navigate(-1);
-        // }
-        const previousPage = localStorage.getItem('previousPage');
+        if (auth?.type === 'verify') {
+            navigate('/verifyToken');
+        } else {
+            const previousPage = localStorage.getItem('previousPage');
 
-        if (auth && previousPage) {
-            // Kiểm tra quyền truy cập vào previousPage ở đây
-
-            if (
-                previousPage.includes('/admin') &&
-                auth.phanQuyen !== 'Khách hàng'
-            ) {
-                navigate('/admin');
-            } else if (auth.phanQuyen === 'Khách hàng') {
+            if (auth && previousPage) {
+                if (
+                    previousPage.includes('/admin') &&
+                    auth.phanQuyen !== 'Khách hàng'
+                ) {
+                    navigate('/admin');
+                } else if (auth.phanQuyen === 'Khách hàng') {
+                    navigate('/');
+                }
+                localStorage.removeItem('previousPage');
+            } else if (auth) {
                 navigate('/');
             }
-            localStorage.removeItem('previousPage');
-        } else if (auth) {
-            navigate(-1);
         }
     }, [navigate, auth]);
 
     const submit = async (e) => {
         e.preventDefault();
-        dispatch(authLogin({ username, password }));
+        dispatch(authLogin({ email, password }));
     };
 
     return (
@@ -73,12 +72,12 @@ function Login() {
                             <MDBInput
                                 wrapperClass='mb-5 mx-10 w-100 p-2'
                                 labelClass='text-white'
-                                label='Tài khoản'
+                                label='Email'
                                 type='email'
                                 size='lg'
                                 className={cx('input')}
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                             />
                             <MDBInput
                                 wrapperClass='mb-5 mx-10 w-100 p-2'
@@ -92,9 +91,13 @@ function Login() {
                             />
 
                             <p className='small mb-3 pb-lg-2'>
-                                <a className='text-white-50' href='#!'>
+                                <Link
+                                    to='/sendToken'
+                                    className='text-white-50'
+                                    style={{ color: '#ff3d13' }}
+                                >
                                     Quên mật khẩu?
-                                </a>
+                                </Link>
                             </p>
                             <MDBBtn
                                 outline
