@@ -164,19 +164,21 @@ class MotoController extends Controller
 
     //GET THE RENTAL TIME
     private function getMotoCalendar($moto_id) {
-        $data = MotoRental::whereDate('end_date', '>', Carbon::now())
-            ->whereHas('RentalDetails', function ($query) use ($moto_id) {
-                $query->where('moto_id', $moto_id)
+    $data = MotoRental::whereDate('end_date', '>', Carbon::now())
+        ->whereHas('rentalDetails', function ($query) use ($moto_id) {
+            $query->where('moto_id', $moto_id)
                 ->where(function ($subQuery) {
                     $subQuery->where('status', 'chưa duyệt')
-                              ->orWhere('status', 'đã duyệt');
+                              ->orWhere('status', 'đã duyệt')
+                              ->whereNull('return_date'); // Thêm điều kiện cho return_date là null
                 });
-            })
-            ->select('start_date', 'end_date')
-            ->get();
+        })
+        ->select('start_date', 'end_date')
+        ->get();
 
-        return $data;
-    }
+    return $data;
+}
+
 
 
     //FORMAT DATA FROM MOTORBIKE TO BE RETURNED TO UI
