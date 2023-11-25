@@ -93,12 +93,17 @@ export const thongKeUser = async () => {
     }
 };
 
-export const rentMoto = async ({ maTaiKhoan, ngayBD, ngayKT, listMoto }) => {
+export const rentMoto = async ({
+    customer_id,
+    start_date,
+    end_date,
+    listMoto,
+}) => {
     try {
         const res = await request.post('addOrder', {
-            maKH: maTaiKhoan,
-            ngayBD,
-            ngayKT,
+            id_customer: customer_id,
+            startDate: start_date,
+            endDate: end_date,
             listMoto,
         });
         return res;

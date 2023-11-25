@@ -123,7 +123,7 @@ class MotoController extends Controller
                 $fileName = time() . '.' . $image->getClientOriginalExtension();
                 $image->move(public_path('Image/Motorbike'), $fileName);
                 $fileData = File::get(public_path('Image/Motorbike/' . $fileName));
-                Storage::disk('motorbike')->put($fileName, $fileData)
+                Storage::disk('motorbike')->put($fileName, $fileData);
                 $storagePath = Storage::disk('motorbike')->url($fileName);
                 array_push($imageUrls, $storagePath);
                 $imageUrls[] = asset('Image/motorbike/' . $fileName);;
@@ -162,11 +162,11 @@ class MotoController extends Controller
 
     //GET THE RENTAL TIME
     private function getMotoCalendar($motoId) {
-        $result = Moto::select('motos.moto_id', 'moto_rentals.ngayBD', 'moto_rentals.ngayKT')
+        $result = Moto::select('motos.moto_id', 'moto_rentals.start_date', 'moto_rentals.end_date')
             ->join('moto_rental_details', 'motos.moto_id', '=', 'moto_rental_details.moto_id')
             ->join('moto_rentals', 'moto_rental_details.rental_id', '=', 'moto_rentals.rental_id')
             ->where('motos.moto_id', $motoId)
-            ->whereDate('moto_rentals.ngayKT', '>', now())
+            ->whereDate('moto_rentals.end_date', '>', now())
             ->get();
 
         return $result;
@@ -192,6 +192,7 @@ class MotoController extends Controller
 
     private function formatMotoDataBySlug($moto){
         return [
+            'moto_id' => $moto->moto_id,
             'moto_name' => $moto->moto_name,
             'brand' => $moto->brand,
             'status' => $moto->status,

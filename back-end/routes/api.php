@@ -52,11 +52,12 @@ Route::get('/getAllOrder',[OrderController::class, 'getAllOrder']);
 Route::post('/addOrder', [OrderController::class, 'addOrder']);
 Route::get('/GetOrderByIdUser/{id_user}', [OrderController::class, 'GetOrderByIdUser']);
 Route::post('/payOrder', [OrderController::class, 'payOrder']);
+Route::post('/confirmOrder',[OrderController::class, 'confirmOrder']);
 
 //ROUTE ABOUT MOTOR
 Route::post('/moto',[MotoController::class, 'GetAllMoto']);
 Route:: prefix('/admin') -> group(function () {
-    Route::get('/getAllMotorbike',[MotoController::class, 'getAllMoto']);
+    Route::post('/getAllMotorbike',[MotoController::class, 'getAllMoto']);
     Route::get('/getMotorBySlug/{slug}', [MotoController::class, 'getMotorBySlug']);
     Route::post('/addMotorbike',[MotoController::class, 'createMoto']);
     Route::post('/updateMotorbike/{moto_id}',[MotoController::class, 'updateMoto']);

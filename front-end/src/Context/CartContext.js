@@ -80,7 +80,6 @@ export const CartContextProvider = ({ children }) => {
             }
         }
     };
-    console.log(cartItems);
 
     // bug
     const removeCartItem = (cartItemId, itemId) => {

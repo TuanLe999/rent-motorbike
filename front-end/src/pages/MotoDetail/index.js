@@ -12,7 +12,6 @@ function MotoDetail() {
     const slug = location.pathname.substring(
         location.pathname.lastIndexOf('/') + 1
     );
-    console.log(slug);
     const [data, setData] = useState();
 
     useEffect(() => {
@@ -22,7 +21,6 @@ function MotoDetail() {
         };
         fetchDate();
     }, [slug]);
-    console.log(data);
 
     return (
         <div className={cx('wrapper')}>

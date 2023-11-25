@@ -23,21 +23,12 @@ export const thongKeRent = async () => {
     }
 };
 
-export const thongKeReturn = async () => {
+export const accpetRentOrder = async ({ censor_id, rental_id }) => {
     try {
-        const res = await request.get('thongkeReturn');
-        return JSON.parse(res);
-    } catch (e) {
-        console.log(e);
-    }
-};
-
-export const accpetRentOrder = async ({ maNVDuyet, maThue }) => {
-    try {
-        const res = await request.post('nvSetOrder', {
-            maNVDuyet,
-            maThue,
-            trangThai: 'Đã duyệt',
+        const res = await request.post('confirmOrder', {
+            censor_id,
+            rental_id,
+            status: 'Đã duyệt',
         });
         return res;
     } catch (e) {
@@ -45,54 +36,21 @@ export const accpetRentOrder = async ({ maNVDuyet, maThue }) => {
     }
 };
 
-export const getAllOrderAccepted = async ({ page, q = '' }) => {
+export const getOrderByID = async (user_id) => {
     try {
-        const res = await request.get('getOrderAccepted', {
-            params: { page, q },
-        });
+        const res = await request.get(`GetOrderByIdUser/${user_id}`);
         return res;
     } catch (e) {
         console.log(e);
     }
 };
 
-export const getAllOrderUnAccepted = async ({ page, q = '' }) => {
-    try {
-        const res = await request.get('getOrderUnAccepted', {
-            params: { page, q },
-        });
-        return res;
-    } catch (e) {
-        console.log(e);
-    }
-};
-
-export const getAllOrderDone = async ({ page, q = '' }) => {
-    try {
-        const res = await request.get('getOrderDone', {
-            params: { page, q },
-        });
-        return res;
-    } catch (e) {
-        console.log(e);
-    }
-};
-
-export const getOrderByID = async (maTaiKhoan) => {
-    try {
-        const res = await request.get(`getOrderByIdUser/${maTaiKhoan}`);
-        return res;
-    } catch (e) {
-        console.log(e);
-    }
-};
-
-export const payOrder = async (maTaiKhoan, maThue, maXe) => {
+export const payOrder = async (user_id, rental_id, listMoto) => {
     try {
         const res = await request.post('payOrder', {
-            maThue,
-            maNVNhanXe: maTaiKhoan,
-            xe: maXe,
+            rental_id,
+            received_staff_id: user_id,
+            listMoto,
         });
         return res;
     } catch (e) {

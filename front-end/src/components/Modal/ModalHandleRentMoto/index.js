@@ -1,5 +1,5 @@
-import classNames from "classnames/bind";
-import styles from "./ModalHandleSignMoto.module.scss";
+import classNames from 'classnames/bind';
+import styles from './ModalHandleSignMoto.module.scss';
 import {
     MDBBtn,
     MDBTable,
@@ -11,14 +11,14 @@ import {
     MDBModalHeader,
     MDBModalTitle,
     MDBModalBody,
-} from "mdb-react-ui-kit";
-import { useState, useEffect, useContext, memo } from "react";
-import { useSelector } from "react-redux";
+} from 'mdb-react-ui-kit';
+import { useState, useEffect, useContext, memo } from 'react';
+import { useSelector } from 'react-redux';
 
-import { AppContext } from "~/Context/AppContext";
-import Button from "~/components/Button";
-import ModalAddError from "../ModalAddError";
-import * as adminServices from "~/api/adminServices";
+import { AppContext } from '~/Context/AppContext';
+import Button from '~/components/Button';
+import ModalAddError from '../ModalAddError';
+import * as adminServices from '~/api/adminServices';
 
 const cx = classNames.bind(styles);
 function ModalHandleRentMoto() {
@@ -34,24 +34,52 @@ function ModalHandleRentMoto() {
     const [checkAll, setCheckAll] = useState(false);
     const [dataModal, setDataModal] = useState(data ?? []);
 
+    // Confirm Order
     const handleAcceptRent = async () => {
         const result = await adminServices.accpetRentOrder({
-            maNVDuyet: auth.maTaiKhoan,
-            maThue: dataModal.maThue,
+            censor_id: auth.user_id,
+            rental_id: dataModal.rental_id,
         });
-        if (result.status === "success") {
+        if (result.status === 'success') {
             setIsToastVisible({
-                type: "success",
+                type: 'success',
                 message: result.mess,
-                title: "Thành công",
+                title: 'Thành công',
                 open: true,
             });
             setIsModalRentVisible(false);
         } else {
             setIsToastVisible({
-                type: "error",
+                type: 'error',
                 message: result.mess,
-                title: "Thất bại",
+                title: 'Thất bại',
+                open: true,
+            });
+            setIsModalRentVisible(false);
+        }
+    };
+
+    // Pay Order
+    const handleAccept = async () => {
+        const selectedXe = dataModal?.detail.filter((xe) => xe.checked);
+        const result = await adminServices.payOrder(
+            auth.user_id,
+            dataModal.rental_id,
+            selectedXe
+        );
+        if (result.status === 'success') {
+            setIsToastVisible({
+                type: 'success',
+                message: result.mess,
+                title: 'Thành công',
+                open: true,
+            });
+            setIsModalRentVisible(false);
+        } else {
+            setIsToastVisible({
+                type: 'error',
+                message: result.mess,
+                title: 'Thất bại',
                 open: true,
             });
             setIsModalRentVisible(false);
@@ -59,26 +87,26 @@ function ModalHandleRentMoto() {
     };
 
     const handleCheckAll = () => {
-        const updatedCheckboxes = dataModal?.chiTiet.map((checkbox) => ({
+        const updatedCheckboxes = dataModal?.detail.map((checkbox) => ({
             ...checkbox,
             checked: !checkAll,
         }));
         setCheckAll(!checkAll);
         setDataModal((prevDataModal) => ({
             ...prevDataModal,
-            chiTiet: updatedCheckboxes,
+            detail: updatedCheckboxes,
         }));
     };
 
     const handleCheckboxChange = (checkboxId) => {
-        const updatedCheckboxes = dataModal?.chiTiet.map((checkbox) =>
-            checkbox.maXe === checkboxId
+        const updatedCheckboxes = dataModal?.detail.map((checkbox) =>
+            checkbox.moto_id === checkboxId
                 ? { ...checkbox, checked: !checkbox.checked }
                 : checkbox
         );
         setDataModal((prevDataModal) => ({
             ...prevDataModal,
-            chiTiet: updatedCheckboxes,
+            detail: updatedCheckboxes,
         }));
 
         const isAllChecked = updatedCheckboxes.every(
@@ -87,9 +115,9 @@ function ModalHandleRentMoto() {
         setCheckAll(isAllChecked);
     };
 
-    const totalAmount = dataModal?.chiTiet?.reduce((total, item) => {
+    const totalAmount = dataModal?.detail?.reduce((total, item) => {
         if (item.checked) {
-            return total + item.giaThue;
+            return total + item.rent_cost;
         }
         return total;
     }, 0);
@@ -98,174 +126,151 @@ function ModalHandleRentMoto() {
         setDataModal(data ?? []);
     }, [data]);
 
-    const handleAccept = async () => {
-        const selectedXe = dataModal?.chiTiet.filter((xe) => xe.checked);
-        const result = await adminServices.payOrder(
-            auth.maTaiKhoan,
-            dataModal.maThue,
-            selectedXe
-        );
-        if (result.status === "success") {
-            setIsToastVisible({
-                type: "success",
-                message: result.mess,
-                title: "Thành công",
-                open: true,
-            });
-            setIsModalRentVisible(false);
-        } else {
-            setIsToastVisible({
-                type: "error",
-                message: result.mess,
-                title: "Thất bại",
-                open: true,
-            });
-            setIsModalRentVisible(false);
-        }
-    };
-
     return (
-        <div className={cx("wrapper")}>
-            <MDBModal show={isModalRentVisible} tabIndex="-1">
-                <MDBModalDialog className={cx("modal_dialog")}>
+        <div className={cx('wrapper')}>
+            <MDBModal show={isModalRentVisible} tabIndex='-1'>
+                <MDBModalDialog className={cx('modal_dialog')}>
                     <MDBModalContent>
                         <MDBModalHeader>
                             <MDBModalTitle>
-                                {typeModal == "ACCEPT"
-                                    ? "Duyệt đăng kí thuê xe"
-                                    : "Xác nhận trả xe"}
+                                {typeModal == 'ACCEPT'
+                                    ? 'Duyệt đăng kí thuê xe'
+                                    : 'Xác nhận trả xe'}
                             </MDBModalTitle>
                             <MDBBtn
-                                className="btn-close"
-                                color="none"
+                                className='btn-close'
+                                color='none'
                                 onClick={() => setIsModalRentVisible(false)}
                             ></MDBBtn>
                         </MDBModalHeader>
 
-                        <MDBModalBody className={cx("modal_body")}>
-                            <MDBTable align="middle" className={cx("table")}>
+                        <MDBModalBody className={cx('modal_body')}>
+                            <MDBTable align='middle' className={cx('table')}>
                                 <MDBTableHead>
                                     <tr>
-                                        {typeModal !== "ACCEPT" ? (
-                                            <th scope="col">
+                                        {typeModal !== 'ACCEPT' ? (
+                                            <th scope='col'>
                                                 <input
-                                                    type="checkbox"
+                                                    type='checkbox'
                                                     style={{
-                                                        cursor: "pointer",
+                                                        cursor: 'pointer',
                                                     }}
                                                     checked={checkAll}
                                                     onChange={handleCheckAll}
                                                 />
                                             </th>
                                         ) : (
-                                            ""
+                                            ''
                                         )}
-                                        <th scope="col">ID xe</th>
-                                        <th scope="col">Tên xe</th>
-                                        <th scope="col">Hãng xe</th>
-                                        <th scope="col">Loại xe</th>
-                                        <th scope="col">Biển số xe</th>
-                                        {typeModal !== "ACCEPT" ? (
-                                            <th scope="col">
+                                        <th scope='col'>ID xe</th>
+                                        <th scope='col'>Tên xe</th>
+                                        <th scope='col'>Hãng xe</th>
+                                        <th scope='col'>Loại xe</th>
+                                        <th scope='col'>Biển số xe</th>
+                                        {typeModal !== 'ACCEPT' ? (
+                                            <th scope='col'>
                                                 Mã nhân viên nhận xe
                                             </th>
                                         ) : (
-                                            ""
+                                            ''
                                         )}
                                         {/* <th scope='col'>Lỗi</th> */}
-                                        <th scope="col">Giá thuê</th>
-                                        {typeModal !== "ACCEPT" ? (
-                                            <th scope="col">Actions</th>
+                                        <th scope='col'>Giá thuê</th>
+                                        {typeModal !== 'ACCEPT' ? (
+                                            <th scope='col'>Actions</th>
                                         ) : (
-                                            ""
+                                            ''
                                         )}
                                     </tr>
                                 </MDBTableHead>
                                 <MDBTableBody>
-                                    {dataModal?.chiTiet?.map((item) => {
+                                    {dataModal?.detail?.map((item) => {
                                         return (
-                                            <tr key={item?.id}>
-                                                {typeModal !== "ACCEPT" ? (
+                                            <tr key={item?.rental_id}>
+                                                {typeModal !== 'ACCEPT' ? (
                                                     <td>
-                                                        {item?.ngayTra !=
+                                                        {item?.return_date !=
                                                         null ? (
-                                                            ""
+                                                            ''
                                                         ) : (
                                                             <input
-                                                                type="checkbox"
-                                                                className="fw-bold mb-1"
+                                                                type='checkbox'
+                                                                className='fw-bold mb-1'
                                                                 style={{
-                                                                    cursor: "pointer",
+                                                                    cursor: 'pointer',
                                                                 }}
                                                                 checked={
                                                                     item.checked
                                                                 }
                                                                 onChange={() =>
                                                                     handleCheckboxChange(
-                                                                        item.maXe
+                                                                        item.moto_id
                                                                     )
                                                                 }
                                                             />
                                                         )}
                                                     </td>
                                                 ) : (
-                                                    ""
+                                                    ''
                                                 )}
                                                 <td>
-                                                    <p className="fw-bold mb-1">
-                                                        {item?.maXe}
+                                                    <p className='fw-bold mb-1'>
+                                                        {item?.moto_id}
                                                     </p>
                                                 </td>
                                                 <td>
-                                                    <div className="ms-3">
-                                                        <p className="fw-bold mb-1">
-                                                            {item?.tenXe}
+                                                    <div className='ms-3'>
+                                                        <p className='fw-bold mb-1'>
+                                                            {item?.moto_name}
                                                         </p>
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <p className="fw-normal mb-1">
-                                                        {item?.hangXe}
+                                                    <p className='fw-normal mb-1'>
+                                                        {item?.brand}
                                                     </p>
                                                 </td>
                                                 <td>
-                                                    <p className="fw-normal mb-1">
-                                                        {item?.loaiXe}
+                                                    <p className='fw-normal mb-1'>
+                                                        {item?.moto_type}
                                                     </p>
                                                 </td>
                                                 <td>
-                                                    <p className="fw-normal mb-1">
-                                                        {item?.bienSoXe}
+                                                    <p className='fw-normal mb-1'>
+                                                        {
+                                                            item?.moto_license_plates
+                                                        }
                                                     </p>
                                                 </td>
-                                                {typeModal !== "ACCEPT" ? (
+                                                {typeModal !== 'ACCEPT' ? (
                                                     <td>
-                                                        <p className="fw-normal mb-1">
-                                                            {item?.maNVNhanXe}
+                                                        <p className='fw-normal mb-1'>
+                                                            {
+                                                                item?.received_staff_id
+                                                            }
                                                         </p>
                                                     </td>
                                                 ) : (
-                                                    ""
+                                                    ''
                                                 )}
-
                                                 <td>
-                                                    <p className="fw-normal mb-1">
-                                                        {item?.giaThue}.000
+                                                    <p className='fw-normal mb-1'>
+                                                        {item?.rent_cost}0
                                                     </p>
                                                 </td>
                                                 <td>
-                                                    {typeModal !== "ACCEPT" && (
+                                                    {typeModal !== 'ACCEPT' && (
                                                         <>
-                                                            {item.trangThai ===
-                                                            "Đã duyệt" ? (
+                                                            {item.return_date ===
+                                                            null ? (
                                                                 <Button
-                                                                    color="link"
-                                                                    size="sm"
+                                                                    color='link'
+                                                                    size='sm'
                                                                     small={true}
                                                                     className={cx(
-                                                                        "fw-normal",
-                                                                        "mb-1",
-                                                                        "btn"
+                                                                        'fw-normal',
+                                                                        'mb-1',
+                                                                        'btn'
                                                                     )}
                                                                     onClick={() =>
                                                                         setIsModalAddErrorVisible(
@@ -276,18 +281,7 @@ function ModalHandleRentMoto() {
                                                                     THÊM LỖI
                                                                 </Button>
                                                             ) : (
-                                                                <MDBBtn
-                                                                    color="link"
-                                                                    rounded
-                                                                    size="sm"
-                                                                    className={cx(
-                                                                        "fw-normal",
-                                                                        "mb-1",
-                                                                        "btn"
-                                                                    )}
-                                                                >
-                                                                    Duyệt
-                                                                </MDBBtn>
+                                                                ''
                                                             )}
                                                         </>
                                                     )}
@@ -296,9 +290,9 @@ function ModalHandleRentMoto() {
                                         );
                                     })}
                                 </MDBTableBody>
-                                {typeModal === "ACCEPT" ? (
+                                {typeModal === 'ACCEPT' ? (
                                     <>
-                                        {dataModal?.trangThai !== "Đã duyệt" ? (
+                                        {dataModal?.status !== 'Đã duyệt' ? (
                                             <tfoot>
                                                 <tr>
                                                     <td></td>
@@ -308,10 +302,10 @@ function ModalHandleRentMoto() {
                                                     <td></td>
                                                     <td>
                                                         <Button
-                                                            size="sm"
+                                                            size='sm'
                                                             primary
                                                             className={cx(
-                                                                "fw-normal"
+                                                                'fw-normal'
                                                             )}
                                                             onClick={
                                                                 handleAcceptRent
@@ -323,43 +317,51 @@ function ModalHandleRentMoto() {
                                                 </tr>
                                             </tfoot>
                                         ) : (
-                                            ""
+                                            ''
                                         )}
                                     </>
                                 ) : (
-                                    <tfoot>
-                                        <tr>
-                                            <td className="fw-bold mb-1">
-                                                Tổng tiền:
-                                            </td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            {typeModal !== "ACCEPT" ? (
-                                                <td></td>
-                                            ) : (
-                                                ""
-                                            )}
-                                            <td></td>
-                                            <td>{totalAmount}.000</td>
-                                            <td>
-                                                <Button
-                                                    color="link"
-                                                    size="sm"
-                                                    small={true}
-                                                    className={cx(
-                                                        "fw-normal",
-                                                        "mb-1",
-                                                        "btn"
+                                    <>
+                                        {dataModal?.status === 'Đã duyệt' ? (
+                                            <tfoot>
+                                                <tr>
+                                                    <td className='fw-bold mb-1'>
+                                                        Tổng tiền:
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    {typeModal !== 'ACCEPT' ? (
+                                                        <td></td>
+                                                    ) : (
+                                                        ''
                                                     )}
-                                                    onClick={handleAccept}
-                                                >
-                                                    XÁC NHẬN
-                                                </Button>
-                                            </td>
-                                        </tr>
-                                    </tfoot>
+                                                    <td></td>
+                                                    <td>{totalAmount}0</td>
+                                                    <td>
+                                                        <Button
+                                                            color='link'
+                                                            size='sm'
+                                                            small={true}
+                                                            className={cx(
+                                                                'fw-normal',
+                                                                'mb-1',
+                                                                'btn'
+                                                            )}
+                                                            onClick={
+                                                                handleAccept
+                                                            }
+                                                        >
+                                                            XÁC NHẬN
+                                                        </Button>
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        ) : (
+                                            ''
+                                        )}
+                                    </>
                                 )}
                             </MDBTable>
                         </MDBModalBody>

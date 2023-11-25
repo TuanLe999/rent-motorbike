@@ -27,7 +27,7 @@ function MotoView({ item }) {
         if (item?.images?.length > 0) {
             setPreviewImage(item.images[0]);
         }
-        setDateMoto(item?.lich);
+        setDateMoto(item?.calendar);
     }, [item, isOpen]);
 
     const isDateDisabled = (current) => {

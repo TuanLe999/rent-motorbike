@@ -107,10 +107,8 @@ function ModalMoto() {
         formDataRef.current.append('status', status);
         formDataRef.current.append('description', description);
         formDataRef.current.append('slug', slug);
-        console.log(hinhAnh);
         for (let i = 0; i < hinhAnh.length; i++) {
             formDataRef.current.append('images[]', hinhAnh[i]);
-            console.log(i);
         }
 
         const fetchData = async () => {
@@ -132,10 +130,8 @@ function ModalMoto() {
                         open: true,
                     });
                 }
-                console.log(result);
             } else {
                 const result = await motoServices.updateXe(formDataRef.current);
-                console.log(result);
                 if (result.status === 'success') {
                     setIsToastVisible({
                         type: 'success',
@@ -154,8 +150,6 @@ function ModalMoto() {
                 }
             }
         };
-
-        console.log(formDataToJSON(formDataRef.current));
 
         fetchData();
     };

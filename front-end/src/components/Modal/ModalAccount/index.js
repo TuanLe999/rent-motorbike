@@ -42,7 +42,6 @@ function ModalAccount() {
                 password: password,
                 role: role,
             });
-            console.log(result);
             if (result.type === 'success') {
                 setIsModalAccountVisible(false);
             } else {
@@ -56,7 +55,6 @@ function ModalAccount() {
                 isError: true,
                 message: 'Mật khẩu không trùng khớp',
             });
-            console.log('Mật khẩu không trùng khớp');
         }
     };
 
