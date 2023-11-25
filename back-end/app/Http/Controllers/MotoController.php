@@ -168,8 +168,8 @@ class MotoController extends Controller
             ->whereHas('RentalDetails', function ($query) use ($moto_id) {
                 $query->where('moto_id', $moto_id)
                 ->where(function ($subQuery) {
-                    $subQuery->where('status', 'active')
-                              ->orWhere('status', 'inactive');
+                    $subQuery->where('status', 'chưa duyệt')
+                              ->orWhere('status', 'đã duyệt');
                 });
             })
             ->select('start_date', 'end_date')
