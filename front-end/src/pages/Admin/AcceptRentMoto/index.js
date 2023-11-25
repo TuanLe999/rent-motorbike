@@ -74,37 +74,15 @@ function AcceptMoto() {
         thongKe();
 
         if (!debouncedValue.trim()) {
-            if (selectedOption === 'DF') {
-                fetchData();
-            } else if (selectedOption === 'Accepted') {
-                fetchData();
-            } else if (selectedOption === 'UnAccepted') {
-                fetchData();
-            }
+            fetchData();
         }
         // call API
-        if (selectedOption === 'DF') {
-            const fetch = async () => {
-                setLoading(true);
-                fetchData(debouncedValue);
-                setLoading(false);
-            };
-            fetch();
-        } else if (selectedOption === 'Accepted') {
-            const fetch = async () => {
-                setLoading(true);
-                fetchData(debouncedValue);
-                setLoading(false);
-            };
-            fetch();
-        } else {
-            const fetch = async () => {
-                setLoading(true);
-                fetchData(debouncedValue);
-                setLoading(false);
-            };
-            fetch();
-        }
+        const fetch = async () => {
+            setLoading(true);
+            fetchData(debouncedValue);
+            setLoading(false);
+        };
+        fetch();
     }, [pageNumber, isModalRentVisible, debouncedValue]);
 
     const fetchData = async (debouncedValue = '') => {
@@ -113,45 +91,13 @@ function AcceptMoto() {
             page: pageNumber,
         });
         setDataRentMoto(result.data);
-        setTotalPage(result.totalPages);
-    };
-
-    // const fetchDataAccepted = async (debouncedValue = '') => {
-    //     const result = await adminServices.getAllOrderAccepted({
-    //         q: debouncedValue,
-    //         page: 1,
-    //     });
-    //     setDataRentMoto(result.data);
-    //     setTotalPage(result.soTrang);
-    // };
-
-    // const fetchDataUnAccepted = async (debouncedValue = '') => {
-    //     const result = await adminServices.getAllOrderUnAccepted({
-    //         q: debouncedValue,
-    //         page: 1,
-    //     });
-    //     setDataRentMoto(result.data);
-    //     setTotalPage(result.soTrang);
-    // };
-
-    const handleChange = (event) => {
-        const selectedValue = event.target.value;
-        setSelectedOption(selectedValue);
-
-        // Gọi API tương ứng với giá trị đã chọn
-        if (selectedValue === 'DF') {
-            fetchData();
-        } else if (selectedValue === 'Accepted') {
-            fetchData();
-        } else if (selectedValue === 'UnAccepted') {
-            fetchData();
-        }
+        setTotalPage(result.soTrang);
     };
 
     const handleTotalOneRent = (item) => {
-        if (item?.chiTiet) {
-            return item.chiTiet.reduce((total, item) => {
-                return total + item.giaThue;
+        if (item?.detail) {
+            return item.detail.reduce((total, item) => {
+                return total + parseFloat(item.rent_cost);
             }, 0);
         }
         return 0;
@@ -222,18 +168,6 @@ function AcceptMoto() {
                         </button>
                     </div>
                 </div>
-                <div>
-                    <div>
-                        <select
-                            className={cx('select')}
-                            onChange={handleChange}
-                        >
-                            <option value='DF'>Mặc định</option>
-                            <option value='Accepted'>Đã duyệt</option>
-                            <option value='UnAccepted'>Chưa duyệt</option>
-                        </select>
-                    </div>
-                </div>
             </div>
             <MDBTable align='middle' className={cx('table')}>
                 <MDBTableHead>
@@ -262,34 +196,34 @@ function AcceptMoto() {
                             >
                                 <td>
                                     <p className='fw-bold mb-1'>
-                                        {item.maThue}
+                                        {item.rental_id}
                                     </p>
                                 </td>
                                 <td>
                                     <div className='ms-3'>
                                         <p className='fw-bold mb-1'>
-                                            {item.hoTen}
+                                            {item.fullname}
                                         </p>
                                     </div>
                                 </td>
                                 <td>
                                     <p className='fw-normal mb-1'>
-                                        {item.ngayBD}
+                                        {item.start_date}
                                     </p>
                                 </td>
                                 <td>
                                     <p className='fw-bold mb-1'>
-                                        {item.ngayKT}
+                                        {item.end_date}
                                     </p>
                                 </td>
                                 <td>
-                                    {item.trangThai == 'Đã duyệt' ? (
+                                    {item.status == 'Đã duyệt' ? (
                                         <MDBBadge
                                             color='success'
                                             pill
                                             className='fw-bold mb-1'
                                         >
-                                            {item.trangThai}
+                                            {item.status}
                                         </MDBBadge>
                                     ) : (
                                         <MDBBadge
@@ -297,13 +231,13 @@ function AcceptMoto() {
                                             pill
                                             className='fw-bold mb-1'
                                         >
-                                            {item.trangThai}
+                                            {item.status}
                                         </MDBBadge>
                                     )}
                                 </td>
                                 <td>
                                     <p className='fw-bold mb-1'>
-                                        {item.maNVDuyet}
+                                        {item.censor_id}
                                     </p>
                                 </td>
                                 <td>

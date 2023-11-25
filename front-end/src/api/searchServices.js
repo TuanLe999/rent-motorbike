@@ -2,10 +2,8 @@ import * as request from '~/utils/request';
 
 export const search = async (q) => {
     try {
-        const res = await request.get('moto', {
-            params: {
-                q,
-            },
+        const res = await request.post('moto', {
+            q,
         });
         return res.data;
     } catch (e) {

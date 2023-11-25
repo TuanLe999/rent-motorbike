@@ -125,7 +125,7 @@ class MotoController extends Controller
                 $fileName = time() . '.' . $image->getClientOriginalExtension();
                 $image->move(public_path('Image/Motorbike'), $fileName);
                 $fileData = File::get(public_path('Image/Motorbike/' . $fileName));
-                Storage::disk('motorbike')->put($fileName, $fileData)
+                Storage::disk('motorbike')->put($fileName, $fileData);
                 $storagePath = Storage::disk('motorbike')->url($fileName);
                 array_push($imageUrls, $storagePath);
                 $imageUrls[] = asset('Image/motorbike/' . $fileName);;
@@ -168,9 +168,9 @@ class MotoController extends Controller
         ->whereHas('rentalDetails', function ($query) use ($moto_id) {
             $query->where('moto_id', $moto_id)
                 ->where(function ($subQuery) {
-                    $subQuery->where('status', 'chưa duyệt')
-                              ->orWhere('status', 'đã duyệt')
-                              ->whereNull('return_date'); // Thêm điều kiện cho return_date là null
+                    $subQuery->whereNull('return_date')
+                    ->where('status', 'chưa duyệt')
+                    ->orWhere('status', 'đã duyệt');// Thêm điều kiện cho return_date là null
                 });
         })
         ->select('start_date', 'end_date')
@@ -200,6 +200,7 @@ class MotoController extends Controller
     //FORMAT DATA FROM MOTORBIKE TO BE RETURNED TO UI
     private function formatMotoDataBySlug($moto){
         return [
+            'moto_id' => $moto->moto_id,
             'moto_name' => $moto->moto_name,
             'brand' => $moto->brand,
             'status' => $moto->status,

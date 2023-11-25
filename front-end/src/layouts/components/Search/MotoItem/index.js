@@ -7,7 +7,11 @@ const cx = classNames.bind(styles);
 function CarItem({ data }) {
     return (
         <Link to={`/moto/${data.slug}`} className={cx('wrapper')}>
-            <Image src={''} alt={data.moto_name} className={cx('avatar')} />
+            <Image
+                src={data.images[0]}
+                alt={data.moto_name}
+                className={cx('avatar')}
+            />
             <div className={cx('info')}>
                 <h4 className={cx('name')}>
                     <span>{data.moto_name}</span>
