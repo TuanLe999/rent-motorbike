@@ -97,7 +97,7 @@ function AcceptMoto() {
     const handleTotalOneRent = (item) => {
         if (item?.detail) {
             return item.detail.reduce((total, item) => {
-                return total + item.rent_cost;
+                return total + parseFloat(item.rent_cost);
             }, 0);
         }
         return 0;
@@ -242,7 +242,7 @@ function AcceptMoto() {
                                 </td>
                                 <td>
                                     <p className='fw-bold mb-1'>
-                                        {handleTotalOneRent(item)}0
+                                        {handleTotalOneRent(item)}.000
                                     </p>
                                 </td>
                                 <td>

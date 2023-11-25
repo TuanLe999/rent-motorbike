@@ -32,4 +32,8 @@ class MotoRental extends Model
     {
         return $this->belongsTo(User::class,'customer_id','user_id');
     }
+    public function RentalDetails()
+    {
+        return $this->hasMany(MotoRentalDetail::class,'rental_id','rental_id');
+    }
 }

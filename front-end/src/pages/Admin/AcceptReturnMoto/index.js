@@ -97,7 +97,7 @@ function AcceptReturnMoto() {
     const handleTotalOneRent = (item) => {
         if (item?.detail) {
             return item.detail.reduce((total, item) => {
-                return total + item.rent_cost;
+                return total + parseFloat(item.rent_cost);
             }, 0);
         }
         return 0;
