@@ -15,6 +15,7 @@ import ManagerMoto from '~/pages/Admin/ManagerMoto';
 import AcceptMoto from '~/pages/Admin/AcceptRentMoto';
 import AcceptReturnMoto from '~/pages/Admin/AcceptReturnMoto';
 import History from '~/pages/History';
+import Violation from '~/pages/Admin/Violation';
 
 // public routes
 const publicRoutes = [
@@ -55,6 +56,11 @@ const publicRoutes = [
     {
         path: config.routes.acceptReturnMoto,
         component: AcceptReturnMoto,
+        layout: AdminLayout,
+    },
+    {
+        path: config.routes.violation,
+        component: Violation,
         layout: AdminLayout,
     },
 ];

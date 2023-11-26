@@ -21,7 +21,6 @@ class MotoRentalDetail extends Model
         'rent_cost',
         'return_date',
         'received_staff_id',
-
     ];
 
     public function Moto()

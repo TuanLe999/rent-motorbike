@@ -39,8 +39,8 @@ function MotoView({ item }) {
         }
 
         for (let i = 0; i < dateMoto.length; i++) {
-            const ngayBD = moment(dateMoto[i].ngayBD, 'DD-MM-YYYY');
-            const ngayKT = moment(dateMoto[i].ngayKT, 'DD-MM-YYYY');
+            const ngayBD = moment(dateMoto[i].start_date, 'YYYY-MM-DD');
+            const ngayKT = moment(dateMoto[i].end_date, 'YYYY-MM-DD');
 
             if (date >= ngayBD && date <= ngayKT) {
                 return true;

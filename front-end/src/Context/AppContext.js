@@ -14,6 +14,7 @@ export const AppContextProvider = ({ children }) => {
     const [dataRentMoto, setDataRentMoto] = useState();
     const [dataMoto, setDataMoto] = useState();
     const [typeModal, setTypeModal] = useState();
+    const [violation, setViolation] = useState();
 
     return (
         <AppContext.Provider
@@ -36,6 +37,8 @@ export const AppContextProvider = ({ children }) => {
                 setDataMoto,
                 isToastVisible,
                 setIsToastVisible,
+                violation,
+                setViolation,
             }}
         >
             {children}

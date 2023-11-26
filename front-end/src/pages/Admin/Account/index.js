@@ -218,7 +218,7 @@ function Account() {
                             className={cx('search-btn')}
                             onMouseDown={(e) => e.preventDefault()}
                         >
-                            <FontAwesomeIcon icon={faMagnifyingGlass} on />
+                            <FontAwesomeIcon icon={faMagnifyingGlass} />
                         </button>
                     </div>
                 </div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\StatisticController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\MotoController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ViolationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
@@ -46,15 +47,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//Order
-
+// Order
 Route::get('/getAllOrder',[OrderController::class, 'getAllOrder']);
 Route::post('/addOrder', [OrderController::class, 'addOrder']);
 Route::get('/GetOrderByIdUser/{id_user}', [OrderController::class, 'GetOrderByIdUser']);
 Route::post('/payOrder', [OrderController::class, 'payOrder']);
 Route::post('/confirmOrder',[OrderController::class, 'confirmOrder']);
+Route::post('/cancelOrder',[OrderController::class, 'cancelOrder']);
 
-//ROUTE ABOUT MOTOR
+// ROUTE ABOUT MOTOR
 Route::post('/moto',[MotoController::class, 'GetAllMoto']);
 Route:: prefix('/admin') -> group(function () {
     Route::post('/getAllMotorbike',[MotoController::class, 'getAllMoto']);
@@ -62,3 +63,7 @@ Route:: prefix('/admin') -> group(function () {
     Route::post('/addMotorbike',[MotoController::class, 'createMoto']);
     Route::post('/updateMotorbike/{moto_id}',[MotoController::class, 'updateMoto']);
 });
+
+// Violation
+Route::post('/addViolation', [ViolationController::class,'addViolation']);
+Route::get('getAllViolation', [ViolationController::class,'getAllViolation']);

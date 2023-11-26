@@ -136,7 +136,6 @@ function AcceptReturnMoto() {
                 />
             </div>
             <div className={cx('action-table')}>
-                {/* <Search /> */}
                 <div>
                     <div className={cx('search')}>
                         <input
@@ -164,7 +163,7 @@ function AcceptReturnMoto() {
                             className={cx('search-btn')}
                             onMouseDown={(e) => e.preventDefault()}
                         >
-                            <FontAwesomeIcon icon={faMagnifyingGlass} on />
+                            <FontAwesomeIcon icon={faMagnifyingGlass} />
                         </button>
                     </div>
                 </div>
@@ -201,7 +200,7 @@ function AcceptReturnMoto() {
                                 <td>
                                     <div className='ms-3'>
                                         <p className='fw-bold mb-1'>
-                                            {item.fullname}
+                                            {item.name_customer}
                                         </p>
                                     </div>
                                 </td>

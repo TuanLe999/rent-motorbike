@@ -29,18 +29,6 @@ class MotoController extends Controller
 
         $motosInfo = [];
         foreach ($motos as $moto) {
-            $motosInfo[] = [
-                'moto_id' => $moto->moto_id,
-                'moto_name' => $moto->moto_name,
-                'brand' => $moto->brand,
-                'status' => $moto->status,
-                'moto_license_plates' => $moto->moto_license_plates,
-                'moto_type' => $moto->moto_type,
-                'rent_cost' => $moto->rent_cost,
-                'slug' => $moto->slug,
-                'description' => $moto->description,
-                'images' => $this->getImageUrls($moto->Images),
-            ];
             $motosInfo[] = $this->formatMotoData($moto);
         }
 
