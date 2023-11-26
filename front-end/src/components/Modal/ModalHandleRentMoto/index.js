@@ -30,6 +30,7 @@ function ModalHandleRentMoto() {
         setIsModalRentVisible,
         setIsModalAddErrorVisible,
         setIsToastVisible,
+        setViolation,
     } = useContext(AppContext);
     const [checkAll, setCheckAll] = useState(false);
     const [dataModal, setDataModal] = useState(data ?? []);
@@ -117,7 +118,7 @@ function ModalHandleRentMoto() {
 
     const totalAmount = dataModal?.detail?.reduce((total, item) => {
         if (item.checked) {
-            return total + item.rent_cost;
+            return total + parseFloat(item.rent_cost);
         }
         return total;
     }, 0);
@@ -133,7 +134,7 @@ function ModalHandleRentMoto() {
                     <MDBModalContent>
                         <MDBModalHeader>
                             <MDBModalTitle>
-                                {typeModal == 'ACCEPT'
+                                {typeModal === 'ACCEPT'
                                     ? 'Duyệt đăng kí thuê xe'
                                     : 'Xác nhận trả xe'}
                             </MDBModalTitle>
@@ -169,7 +170,7 @@ function ModalHandleRentMoto() {
                                         <th scope='col'>Biển số xe</th>
                                         {typeModal !== 'ACCEPT' ? (
                                             <th scope='col'>
-                                                Mã nhân viên nhận xe
+                                                Nhân viên duyệt xe
                                             </th>
                                         ) : (
                                             ''
@@ -184,9 +185,9 @@ function ModalHandleRentMoto() {
                                     </tr>
                                 </MDBTableHead>
                                 <MDBTableBody>
-                                    {dataModal?.detail?.map((item) => {
+                                    {dataModal?.detail?.map((item, index) => {
                                         return (
-                                            <tr key={item?.rental_id}>
+                                            <tr key={index}>
                                                 {typeModal !== 'ACCEPT' ? (
                                                     <td>
                                                         {item?.return_date !=
@@ -245,9 +246,7 @@ function ModalHandleRentMoto() {
                                                 {typeModal !== 'ACCEPT' ? (
                                                     <td>
                                                         <p className='fw-normal mb-1'>
-                                                            {
-                                                                item?.received_staff_id
-                                                            }
+                                                            {item?.name_censor}
                                                         </p>
                                                     </td>
                                                 ) : (
@@ -272,11 +271,19 @@ function ModalHandleRentMoto() {
                                                                         'mb-1',
                                                                         'btn'
                                                                     )}
-                                                                    onClick={() =>
+                                                                    onClick={() => {
                                                                         setIsModalAddErrorVisible(
                                                                             true
-                                                                        )
-                                                                    }
+                                                                        );
+                                                                        setViolation(
+                                                                            {
+                                                                                rental_detail_id:
+                                                                                    item.rental_detail_id,
+                                                                                moto_id:
+                                                                                    item.moto_id,
+                                                                            }
+                                                                        );
+                                                                    }}
                                                                 >
                                                                     THÊM LỖI
                                                                 </Button>
@@ -292,7 +299,10 @@ function ModalHandleRentMoto() {
                                 </MDBTableBody>
                                 {typeModal === 'ACCEPT' ? (
                                     <>
-                                        {dataModal?.status !== 'Đã duyệt' ? (
+                                        {dataModal?.status === 'Hoàn tất' ||
+                                        dataModal?.status === 'Đã duyệt' ? (
+                                            ''
+                                        ) : (
                                             <tfoot>
                                                 <tr>
                                                     <td></td>
@@ -316,8 +326,6 @@ function ModalHandleRentMoto() {
                                                     </td>
                                                 </tr>
                                             </tfoot>
-                                        ) : (
-                                            ''
                                         )}
                                     </>
                                 ) : (
@@ -338,7 +346,7 @@ function ModalHandleRentMoto() {
                                                         ''
                                                     )}
                                                     <td></td>
-                                                    <td>{totalAmount}0</td>
+                                                    <td>{totalAmount}000</td>
                                                     <td>
                                                         <Button
                                                             color='link'

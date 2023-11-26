@@ -66,6 +66,15 @@ function AcceptMoto() {
         }
     };
 
+    const fetchData = async (debouncedValue = '') => {
+        const result = await adminServices.getAllOrder({
+            q: debouncedValue,
+            page: pageNumber,
+        });
+        setDataRentMoto(result.data);
+        setTotalPage(result.soTrang);
+    };
+
     useEffect(() => {
         const thongKe = async () => {
             const result = await adminServices.thongKeRent();
@@ -84,15 +93,6 @@ function AcceptMoto() {
         };
         fetch();
     }, [pageNumber, isModalRentVisible, debouncedValue]);
-
-    const fetchData = async (debouncedValue = '') => {
-        const result = await adminServices.getAllOrder({
-            q: debouncedValue,
-            page: pageNumber,
-        });
-        setDataRentMoto(result.data);
-        setTotalPage(result.soTrang);
-    };
 
     const handleTotalOneRent = (item) => {
         if (item?.detail) {
@@ -202,7 +202,7 @@ function AcceptMoto() {
                                 <td>
                                     <div className='ms-3'>
                                         <p className='fw-bold mb-1'>
-                                            {item.fullname}
+                                            {item.name_customer}
                                         </p>
                                     </div>
                                 </td>
@@ -217,7 +217,7 @@ function AcceptMoto() {
                                     </p>
                                 </td>
                                 <td>
-                                    {item.status == 'Đã duyệt' ? (
+                                    {item.status === 'Đã duyệt' ? (
                                         <MDBBadge
                                             color='success'
                                             pill
@@ -237,7 +237,7 @@ function AcceptMoto() {
                                 </td>
                                 <td>
                                     <p className='fw-bold mb-1'>
-                                        {item.censor_id}
+                                        {item.name_censor}
                                     </p>
                                 </td>
                                 <td>
@@ -283,7 +283,7 @@ function AcceptMoto() {
                             <button
                                 className={cx(
                                     'btn-page',
-                                    pageNumber == page ? 'btn-selected' : ''
+                                    pageNumber === page ? 'btn-selected' : ''
                                 )}
                                 onClick={() => setPageNumber(page)}
                                 key={page}

@@ -15,6 +15,7 @@ const routes = {
     updateInfoMoto: '/admin/updateInfoMoto',
     acceptRentMoto: '/admin/acceptRentMoto',
     acceptReturnMoto: '/admin/acceptReturnMoto',
+    violation: '/admin/violation',
 };
 
 export default routes;

@@ -18,6 +18,7 @@ import {
     faRotateLeft,
     faCheckCircle,
     faRightToBracket,
+    faTriangleExclamation,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -96,6 +97,15 @@ function Sidebar() {
                         to={config.routes.admin + '/acceptReturnMoto'}
                         icon={<FontAwesomeIcon icon={faRotateLeft} />}
                         activeIcon={<FontAwesomeIcon icon={faRotateLeft} />}
+                    />
+                    <MenuItem
+                        disable={auth?.role !== 'Nhân viên'}
+                        title={'Danh sách lỗi vi phạm'}
+                        to={config.routes.admin + '/violation'}
+                        icon={<FontAwesomeIcon icon={faRotateLeft} />}
+                        activeIcon={
+                            <FontAwesomeIcon icon={faTriangleExclamation} />
+                        }
                     />
                 </Menu>
                 <div className={cx('footer')}>

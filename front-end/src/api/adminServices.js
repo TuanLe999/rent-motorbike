@@ -57,3 +57,37 @@ export const payOrder = async (user_id, rental_id, listMoto) => {
         console.log(e);
     }
 };
+
+export const addViolation = async (
+    rental_detail_id,
+    moto_id,
+    violation_type_id,
+    note,
+    cost
+) => {
+    try {
+        const res = await request.post('addViolation', {
+            rental_detail_id,
+            moto_id,
+            violation_type_id,
+            note,
+            cost,
+        });
+        return res;
+    } catch (e) {
+        console.log(e);
+    }
+};
+
+export const getAllViolation = async ({ q = '' }) => {
+    try {
+        const res = await request.get('getAllViolation', {
+            params: {
+                q,
+            },
+        });
+        return res;
+    } catch (e) {
+        console.log(e);
+    }
+};

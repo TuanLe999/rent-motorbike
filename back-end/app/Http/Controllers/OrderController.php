@@ -21,7 +21,8 @@ class OrderController extends Controller
         $vt = ($page - 1) * $so_item;
 
         $data_don = MotoRental::join('users', 'moto_rentals.customer_id', '=', 'users.user_id')
-            ->select('moto_rentals.*', 'users.fullname')
+            ->join('users as censor', 'moto_rentals.censor_id', '=', 'censor.user_id')
+            ->select('moto_rentals.*','censor.fullname as name_censor', 'users.fullname as name_customer',)
             ->orderByDesc('start_date')
             ->when($q, function ($query) use ($q) {
                 return $query->where('fullname', 'LIKE', '%' . $q . '%');
@@ -40,7 +41,8 @@ class OrderController extends Controller
         $soTrang = $this->getSoTrang($soLuong, $so_item);
 
         $data_chitiet = MotoRentalDetail::join('motos', 'moto_rental_details.moto_id', '=', 'motos.moto_id')
-            ->select('moto_rental_details.*', 'motos.moto_name', 'motos.moto_type', 'motos.brand', 'motos.moto_license_plates')
+            ->join('users as censor', 'moto_rental_details.received_staff_id', '=', 'censor.user_id')
+            ->select('moto_rental_details.*','censor.fullname as name_censor', 'motos.moto_name', 'motos.moto_type', 'motos.brand', 'motos.moto_license_plates')
             ->get();
 
         $data_loi = ViolationDetail::select('violation_details.violation_id', 'violation_types.violation_content', 'violation_details.note', 'violation_details.violation_cost')
@@ -59,7 +61,7 @@ class OrderController extends Controller
             return $item;
         });
 
-        return $this->printRs("SUCCESS", null, $new_data, true, $soTrang);
+        return $this->printRs("SUCCESS", null, $new_data, true,$soTrang);
     }
 
 
@@ -106,7 +108,7 @@ class OrderController extends Controller
     }
 
 
-    private function printRs($status, $message, $data, $hasPagination)
+    private function printRs($status, $message, $data, $hasPagination,$totalPage = 1)
     {
         $response = [
             'status' => $status,
@@ -115,7 +117,7 @@ class OrderController extends Controller
         ];
 
         if ($hasPagination) {
-            $response['soTrang'] = 1; // Thay 1 bằng số trang thực tế nếu có
+            $response['totalPage'] = $totalPage; 
         }
 
         return response()->json($response);
@@ -161,40 +163,37 @@ class OrderController extends Controller
 
     public function payOrder(Request $request)
     {
-        try {
-
             $data = $request->all();
-            DB::beginTransaction();
+            // DB::beginTransaction();
             foreach ($data['listMoto'] as $moto) {
 
                 $rentalDetail = MotoRentalDetail::where('rental_id', $data['rental_id'])->where('moto_id', $moto['moto_id'])->first();
                 if (!$rentalDetail) {
-                    DB::rollBack();
+                    // DB::rollBack();
                     return $this->printRs("error", "Không tìm thấy hóa đơn cần thanh toán!", $moto['moto_id'], null);
                 }
                 if ($rentalDetail->return_date != null) {
-                    DB::rollBack();
+                    // DB::rollBack();
                     return $this->printRs("error", "Xe đã được thanh toán!", $moto['moto_id'], null);
                 } else {
                     $rentalDetail->received_staff_id = $data['received_staff_id'];
                     $rentalDetail->return_date = Carbon::now();
                     $rentalDetail->save();
-                    foreach ($moto['violation'] as $violation) {
-                        $newViolationDetail = new ViolationDetail();
-                        $newViolationDetail->rental_detail_id = $rentalDetail->rental_detail_id;
-                        $newViolationDetail->note = $violation['note'];
-                        $newViolationDetail->violation_cost = $violation['violation_cost'];
-                        $newViolationDetail->violation_type_id = $violation['violation_type_id'];
-                        $newViolationDetail->save();
-                    }
                 }
             }
+
             DB::commit();
-            return $this->printRs("success", "Thanh toán thành công", $data['listMotos'], null);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return $this->printRs("error", "Thanh toán thất bại, lỗi xảy ra trong quá trình thực hiện!", null, null);
-        }
+            $motoRental = MotoRental::find($data['rental_id']);
+
+            $allReturned = $motoRental->RentalDetails->every(function ($detail) {
+                return $detail->return_date !== null;
+            });
+
+            if($allReturned){
+                $motoRental->status = "Hoàn tất";
+                $motoRental->save();
+            }
+            return $this->printRs("success", "Thanh toán thành công", $data['listMoto'], null);
     }
 
     public function confirmOrder(Request $request)
@@ -217,6 +216,43 @@ class OrderController extends Controller
             $motoRental->censor_id = $censorId;
             $motoRental->status = $status;
             $motoRental->save();
+
+            return response()->json(['status' => 'success', 'message' => 'Success'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function cancelOrder(Request $request)
+    {
+        try {
+            // Lấy dữ liệu từ request
+            $censorId = $request->input('censor_id');
+            $rentalId = $request->input('rental_id');
+            $status = $request->input('status');
+
+            // Tìm đơn thuê xe dựa trên rental_id
+            $motoRental = MotoRental::find($rentalId);
+
+            // Kiểm tra xem đơn thuê có tồn tại không
+            if (!$motoRental) {
+                return response()->json(['status' => 'error', 'message' => 'Order not found'], 404);
+            }
+
+            // Cập nhật thông tin đơn thuê
+            $motoRental->censor_id = $censorId;
+            $motoRental->status = $status;
+            $motoRental->save();
+
+            // Tìm tất cả đơn thuê chi tiết dựa trên rental_id
+            $motoRentalDetails = MotoRentalDetail::where('rental_id', $rentalId)->get();
+
+            // Cập nhật dữ liệu return_date cho từng đơn thuê chi tiết
+            foreach ($motoRentalDetails as $motoRentalDetail) {
+                $motoRentalDetail->return_date = Carbon::now();
+
+                $motoRentalDetail->save();
+            }
 
             return response()->json(['status' => 'success', 'message' => 'Success'], 200);
         } catch (\Exception $e) {
