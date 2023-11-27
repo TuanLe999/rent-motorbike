@@ -54,8 +54,8 @@ npm install
 npm start
 ```
 
-Open [http://localhost:6868](http://localhost:6868) to view it in your browser.
-Open [http://localhost:6868/admin](http://localhost:6868/admin) to view ADMIN page.
+Open [http://localhost:7000](http://localhost:7000) to view it in your browser.
+Open [http://localhost:7000/admin](http://localhost:7000/admin) to view ADMIN page.
 
 ### Account
 
