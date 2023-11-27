@@ -99,44 +99,49 @@ class MotoController extends Controller
 
 
     //UPDATE MOTORBIKE BY ID
-    public function updateMoto(Request $request, $id){
+    public function updateMoto(Request $request, $id)
+    {
         $moto = Moto::find($id);
+
         if (!$moto) {
             return response()->json(['error' => 'Moto not found'], 404);
         }
-        $moto->images()->delete();
 
-        if ($request->hasFile('images')) {
-            $images = $request->file('images');
-            $imageUrls = [];
-            foreach ($images as $image) {
-                $fileName = time() . '.' . $image->getClientOriginalExtension();
-                $image->move(public_path('Image/Motorbike'), $fileName);
-                $fileData = File::get(public_path('Image/Motorbike/' . $fileName));
-                Storage::disk('motorbike')->put($fileName, $fileData);
-                $storagePath = Storage::disk('motorbike')->url($fileName);
-                array_push($imageUrls, $storagePath);
-                $imageUrls[] = asset('Image/motorbike/' . $fileName);;
-            }
+        $imagesUrl = $request->input('imagesUrl', []);
+        $imagesFile = $request->file('imagesFile', []);
 
-            $moto->update([
-                'moto_name' => $request->input('moto_name', $moto->moto_name),
-                'brand' => $request->input('brand', $moto->brand),
-                'status' => $request->input('status', $moto->status),
-                'moto_license_plates' => $request->input('moto_license_plates', $moto->moto_license_plates),
-                'moto_type' => $request->input('moto_type', $moto->moto_type),
-                'rent_cost' => $request->input('rent_cost', $moto->rent_cost),
-                'slug' => $request->input('slug', $moto->slug),
-                'description' => $request->input('description', $moto->description),
-            ]);
+        $existingImageUrls = $moto->images()->pluck('url')->toArray();
+        $imagesToDelete = array_diff($existingImageUrls, $imagesUrl);
+        Image::whereIn('url', $imagesToDelete)->delete();
 
-            foreach ($imageUrls as $imageUrl) {
-                Image::create([
-                    'moto_id' => $moto->moto_id,
-                    'url' => $imageUrl,
-                ]);
-            }
+        $imageUrls = [];
+        foreach ($imagesFile as $image) {
+            $fileName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('Image/Motorbike'), $fileName);
+            $fileData = File::get(public_path('Image/Motorbike/' . $fileName));
+            Storage::disk('motorbike')->put($fileName, $fileData);
+            $storagePath = Storage::disk('motorbike')->url($fileName);
+            array_push($imageUrls, $storagePath);
         }
+
+        $moto->update([
+            'moto_name' => $request->input('moto_name', $moto->moto_name),
+            'brand' => $request->input('brand', $moto->brand),
+            'status' => $request->input('status', $moto->status),
+            'moto_license_plates' => $request->input('moto_license_plates', $moto->moto_license_plates),
+            'moto_type' => $request->input('moto_type', $moto->moto_type),
+            'rent_cost' => $request->input('rent_cost', $moto->rent_cost),
+            'slug' => $request->input('slug', $moto->slug),
+            'description' => $request->input('description', $moto->description),
+        ]);
+
+        foreach ($imageUrls as $imageUrl) {
+            Image::create([
+                'moto_id' => $moto->moto_id,
+                'url' => $imageUrl,
+            ]);
+        }
+
         return response()->json([
             'status' => 'success',
             'message' => 'Moto updated successfully',

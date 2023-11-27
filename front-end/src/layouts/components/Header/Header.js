@@ -44,24 +44,15 @@ function Header() {
                     </Link>
                 </div>
 
-                <div className={cx('wrapper-menu')}>
+                {/* <div className={cx('wrapper-menu')}>
                     <ul className={cx('menu')}>
                         <li>
                             <Button to={config.routes.home} className>
                                 Trang Chủ
                             </Button>
                         </li>
-                        <li>
-                            <Button to={''}>Xe</Button>
-                        </li>
-                        <li>
-                            <Button to={''}>Giới Thiệu</Button>
-                        </li>
-                        <li>
-                            <Button to={''}>Liên Hệ</Button>
-                        </li>
                     </ul>
-                </div>
+                </div> */}
 
                 <Search />
 
