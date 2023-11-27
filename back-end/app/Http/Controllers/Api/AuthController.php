@@ -24,7 +24,7 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Email verified successfully',
                 'type' => 'success',
-                'user' => $user
+                'data' => $user
             ]);
         }
         return response()->json([
@@ -69,7 +69,7 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'User Registered',
             'type' => 'success',
-            'data' => ['user' => $user],
+            'data' =>  $user,
         ]);
     }
 

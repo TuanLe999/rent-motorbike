@@ -20,8 +20,8 @@ class OrderController extends Controller
         $so_item = 10;
         $vt = ($page - 1) * $so_item;
 
-        $data_don = MotoRental::join('users', 'moto_rentals.customer_id', '=', 'users.user_id')
-            ->join('users as censor', 'moto_rentals.censor_id', '=', 'censor.user_id')
+        $data_don = MotoRental::leftjoin('users', 'moto_rentals.customer_id', '=', 'users.user_id')
+            ->leftjoin('users as censor', 'moto_rentals.censor_id', '=', 'censor.user_id')
             ->select('moto_rentals.*','censor.fullname as name_censor', 'users.fullname as name_customer',)
             ->orderByDesc('start_date')
             ->when($q, function ($query) use ($q) {
@@ -40,17 +40,18 @@ class OrderController extends Controller
 
         $soTrang = $this->getSoTrang($soLuong, $so_item);
 
-        $data_chitiet = MotoRentalDetail::join('motos', 'moto_rental_details.moto_id', '=', 'motos.moto_id')
-            ->join('users as censor', 'moto_rental_details.received_staff_id', '=', 'censor.user_id')
+        $data_chitiet = MotoRentalDetail::leftjoin('motos', 'moto_rental_details.moto_id', '=', 'motos.moto_id')
+            ->leftjoin('users as censor', 'moto_rental_details.received_staff_id', '=', 'censor.user_id')
             ->select('moto_rental_details.*','censor.fullname as name_censor', 'motos.moto_name', 'motos.moto_type', 'motos.brand', 'motos.moto_license_plates')
             ->get();
 
-        $data_loi = ViolationDetail::select('violation_details.violation_id', 'violation_types.violation_content', 'violation_details.note', 'violation_details.violation_cost')
-            ->join('violation_types', 'violation_details.violation_type_id', '=', 'violation_types.violation_type_id')
+        $data_loi = ViolationDetail::leftjoin('violation_types', 'violation_details.violation_type_id', '=', 'violation_types.violation_type_id')
+            ->leftjoin('moto_rental_details','moto_rental_details.rental_detail_id', '=', 'violation_details.rental_detail_id')
+            ->select('moto_rental_details.rental_detail_id','violation_details.violation_id', 'violation_types.violation_content', 'violation_details.note', 'violation_details.violation_cost')
             ->get();
 
         $new_data_chitiet = $data_chitiet->map(function ($item) use ($data_loi) {
-            $item->violation = $data_loi->where('violation_id', $item->violation_id)->toArray();
+            $item->violation = $data_loi->where('rental_detail_id', $item->rental_detail_id)->values()->toArray();
             return $item;
         });
 

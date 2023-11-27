@@ -46,13 +46,17 @@ export const addXe = async (formData) => {
     }
 };
 
-export const updateXe = async (formData) => {
+export const updateXe = async (formData, moto_id) => {
     try {
-        const res = await request.post('updateXe', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
+        const res = await request.post(
+            `admin/updateMotorbike/${moto_id}`,
+            formData,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }
+        );
         return res;
     } catch (e) {
         console.log(e);

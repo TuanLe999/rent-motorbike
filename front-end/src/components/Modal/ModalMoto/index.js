@@ -45,8 +45,9 @@ function ModalMoto() {
     const [status, setStatus] = useState(data?.status ?? '');
     const [description, setDescription] = useState(data?.description ?? '');
     const [slug, setSlug] = useState(data?.slug ?? '');
-    const [hinhAnh, setHinhAnh] = useState(data?.images ?? []);
-    const [multipleImages, setMultipleImages] = useState(data?.images ?? []);
+    const [imageUrl, setImageUrl] = useState(data?.images ?? []);
+    const [imageFile, setImageFile] = useState([]);
+    const [previewImage, setPreviewImage] = useState([]);
     const formDataRef = useRef(new FormData());
 
     useEffect(() => {
@@ -56,33 +57,36 @@ function ModalMoto() {
         setPrice(data?.rent_cost ?? '');
         setType(data?.moto_type ?? '');
         setLicensePlates(data?.moto_license_plates ?? '');
-        setHinhAnh(data?.images ?? '');
         setStatus(data?.status ?? '');
         setDescription(data?.description ?? '');
         setSlug(data?.slug ?? '');
-        setMultipleImages(data?.images ?? []);
+        setImageUrl(data?.images ?? []);
     }, [data]);
 
     const changeMultipleFiles = (e) => {
         if (e.target.files) {
-            const file = e.target.files;
             const filesArray = Array.from(e.target.files);
+            console.log(filesArray);
+            console.log(e.target.files);
             const imageArray = filesArray.map((file) =>
                 URL.createObjectURL(file)
             );
             // add image to call api
-            setHinhAnh(file);
-
+            filesArray.forEach((file) => {
+                setImageFile((prevFiles) => [...prevFiles, file]);
+            });
             // preview image
-            setMultipleImages((prevImages) => prevImages.concat(imageArray));
+            setPreviewImage((prevImages) => prevImages.concat(imageArray));
         }
     };
 
-    const removeImage = (index) => {
-        setMultipleImages((prevImages) =>
+    const removeImageFile = (index) => {
+        setPreviewImage((prevImages) =>
             prevImages.filter((_, i) => i !== index)
         );
     };
+
+    const removeImageUrl = (url) => {};
 
     function formDataToJSON(formData) {
         const json = {};
@@ -96,7 +100,13 @@ function ModalMoto() {
         event.preventDefault();
 
         if (typeModal !== 'ADD') {
-            formDataRef.current.append('moto_id', data?.moto_id);
+            for (let i = 0; i < imageFile.length; i++) {
+                formDataRef.current.append('imageUrl[]', imageUrl[i]);
+            }
+        } else {
+            for (let i = 0; i < imageFile.length; i++) {
+                formDataRef.current.append('images', imageFile[i]);
+            }
         }
 
         formDataRef.current.append('moto_name', nameMoto);
@@ -107,10 +117,8 @@ function ModalMoto() {
         formDataRef.current.append('status', status);
         formDataRef.current.append('description', description);
         formDataRef.current.append('slug', slug);
-        for (let i = 0; i < hinhAnh.length; i++) {
-            formDataRef.current.append('images[]', hinhAnh[i]);
-        }
 
+        console.log(formDataToJSON(formDataRef.current));
         const fetchData = async () => {
             if (typeModal === 'ADD') {
                 const result = await motoServices.addXe(formDataRef.current);
@@ -131,7 +139,10 @@ function ModalMoto() {
                     });
                 }
             } else {
-                const result = await motoServices.updateXe(formDataRef.current);
+                const result = await motoServices.updateXe(
+                    formDataRef.current,
+                    idMoto
+                );
                 if (result.status === 'success') {
                     setIsToastVisible({
                         type: 'success',
@@ -307,73 +318,56 @@ function ModalMoto() {
                                         alignItems: 'center',
                                     }}
                                 >
-                                    {multipleImages?.map((image, index) => {
+                                    {imageUrl?.map((image, index) => {
                                         return (
-                                            <>
-                                                {image.includes('localhost') ? (
-                                                    <div
-                                                        className={cx(
-                                                            'item-image'
-                                                        )}
-                                                    >
-                                                        <img
-                                                            className={cx(
-                                                                'image'
-                                                            )}
-                                                            src={image}
-                                                            alt=''
-                                                            key={image}
-                                                            width='200'
-                                                            height='200'
-                                                        />
-                                                        <Button
-                                                            className={cx(
-                                                                'delete-image'
-                                                            )}
-                                                            onClick={() =>
-                                                                removeImage(
-                                                                    index
-                                                                )
-                                                            }
-                                                        >
-                                                            <FontAwesomeIcon
-                                                                icon={faClose}
-                                                            />
-                                                        </Button>
-                                                    </div>
-                                                ) : (
-                                                    <div
-                                                        className={cx(
-                                                            'item-image'
-                                                        )}
-                                                    >
-                                                        <img
-                                                            className={cx(
-                                                                'image'
-                                                            )}
-                                                            src={image}
-                                                            alt=''
-                                                            key={image}
-                                                            width='200'
-                                                            height='200'
-                                                        />
-                                                        <Button
-                                                            className={cx(
-                                                                'delete-image'
-                                                            )}
-                                                            onClick={() =>
-                                                                removeImage(
-                                                                    index
-                                                                )
-                                                            }
-                                                        >
-                                                            <FontAwesomeIcon
-                                                                icon={faClose}
-                                                            />
-                                                        </Button>
-                                                    </div>
-                                                )}
-                                            </>
+                                            <div className={cx('item-image')}>
+                                                <img
+                                                    className={cx('image')}
+                                                    src={image}
+                                                    alt=''
+                                                    key={image}
+                                                    width='200'
+                                                    height='200'
+                                                />
+                                                <Button
+                                                    className={cx(
+                                                        'delete-image'
+                                                    )}
+                                                    onClick={() =>
+                                                        removeImageUrl(index)
+                                                    }
+                                                >
+                                                    <FontAwesomeIcon
+                                                        icon={faClose}
+                                                    />
+                                                </Button>
+                                            </div>
+                                        );
+                                    })}
+                                    {previewImage?.map((image, index) => {
+                                        return (
+                                            <div className={cx('item-image')}>
+                                                <img
+                                                    className={cx('image')}
+                                                    src={image}
+                                                    alt=''
+                                                    key={image}
+                                                    width='200'
+                                                    height='200'
+                                                />
+                                                <Button
+                                                    className={cx(
+                                                        'delete-image'
+                                                    )}
+                                                    onClick={() =>
+                                                        removeImageFile(index)
+                                                    }
+                                                >
+                                                    <FontAwesomeIcon
+                                                        icon={faClose}
+                                                    />
+                                                </Button>
+                                            </div>
                                         );
                                     })}
                                 </div>

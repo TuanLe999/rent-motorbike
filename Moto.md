@@ -337,3 +337,23 @@
 - method: `POST`
 - params: 'id_order', 'id_employee', 'motorbike'
 - motorbike: ['id_order']
+
+
+{
+    "moto_name": "Moto Demo",
+    "brand": "Brand Demo",
+    "status": "Active",
+    "moto_license_plates": "ABC123",
+    "moto_type": "Type Demo",
+    "rent_cost": 50,
+    "slug": "moto-demo",
+    "description": "This is a demo moto.",
+    "imagesUrl": [
+        "https://example.com/image1.jpg",
+        "https://example.com/image2.jpg"
+    ],
+    "imagesFile": [
+        (file1),
+        (file2)
+    ]
+}
