@@ -2,26 +2,49 @@ import classNames from 'classnames/bind';
 import Image from '~/components/Image';
 import styles from './History.module.scss';
 
+import Toast from '~/components/Toast';
 import image from '~/assets/image';
 import Button from '~/components/Button';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import * as adminServices from '~/api/adminServices';
 import { useSelector } from 'react-redux';
+import { AppContext } from '~/Context/AppContext';
 
 const cx = classNames.bind(styles);
 function History() {
     const [history, setHistory] = useState([]);
+    const { setIsToastVisible, isToastVisible } = useContext(AppContext);
     const { auth } = useSelector((state) => state.auth);
+
     useEffect(() => {
         const fetchData = async () => {
             const result = await adminServices.getOrderByID(auth.user_id);
             setHistory(result.data);
         };
         fetchData();
-    }, [auth.user_id]);
+    }, [auth.user_id, isToastVisible]);
 
-    console.log(history);
-    const handleCancelRent = () => {};
+    const handleCancelRent = async (rental_id) => {
+        const result = await adminServices.cancelOrder({
+            censor_id: auth.user_id,
+            rental_id: rental_id,
+        });
+        if (result.status === 'success') {
+            setIsToastVisible({
+                type: 'success',
+                message: result.mess,
+                title: 'Thành công',
+                open: true,
+            });
+        } else {
+            setIsToastVisible({
+                type: 'error',
+                message: result.mess,
+                title: 'Thất bại',
+                open: true,
+            });
+        }
+    };
 
     return (
         <div className={cx('purchase-history')}>
@@ -53,15 +76,27 @@ function History() {
                             </div>
                         </div>
                         <div className={cx('purchase-footer')}>
-                            {purchase.status == 'Đã duyệt' ? (
+                            {purchase.status === 'Đã duyệt' ||
+                            purchase.status === 'Đã huỷ' ? (
                                 ''
                             ) : (
-                                <Button onClick={handleCancelRent}>HUỶ</Button>
+                                <Button
+                                    onClick={() =>
+                                        handleCancelRent(purchase.rental_id)
+                                    }
+                                >
+                                    HUỶ
+                                </Button>
                             )}
                         </div>
                     </div>
                 ))}
             </div>
+            <Toast
+                type={isToastVisible?.type}
+                message={isToastVisible?.message}
+                title={isToastVisible?.title}
+            />
         </div>
     );
 }

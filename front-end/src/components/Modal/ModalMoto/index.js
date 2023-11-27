@@ -81,12 +81,18 @@ function ModalMoto() {
     };
 
     const removeImageFile = (index) => {
+        setImageFile((prevImages) => prevImages.filter((_, i) => i !== index));
         setPreviewImage((prevImages) =>
             prevImages.filter((_, i) => i !== index)
         );
     };
 
-    const removeImageUrl = (url) => {};
+    const removeImageUrl = (index) => {
+        setImageUrl((prevImages) => prevImages.filter((_, i) => i !== index));
+    };
+
+    console.log(imageFile);
+    console.log(imageUrl);
 
     function formDataToJSON(formData) {
         const json = {};
@@ -100,12 +106,15 @@ function ModalMoto() {
         event.preventDefault();
 
         if (typeModal !== 'ADD') {
+            for (let i = 0; i < imageUrl.length; i++) {
+                formDataRef.current.append('imagesUrl[]', imageUrl[i]);
+            }
             for (let i = 0; i < imageFile.length; i++) {
-                formDataRef.current.append('imageUrl[]', imageUrl[i]);
+                formDataRef.current.append('imagesFile[]', imageFile[i]);
             }
         } else {
             for (let i = 0; i < imageFile.length; i++) {
-                formDataRef.current.append('images', imageFile[i]);
+                formDataRef.current.append('images[]', imageFile[i]);
             }
         }
 

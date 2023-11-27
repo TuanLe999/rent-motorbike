@@ -63,7 +63,7 @@ class StatisticController extends Controller
 
         $totalCustomer = User::where('role', 'Khách hàng')->count();
 
-        $totalUserVerifyYet = User::whereNotNull('email_verified_at')->count();
+        $totalUserVerify = User::whereNotNull('email_verified_at')->count();
 
         return response()->json([
                 'message' => 'Successfully',
@@ -71,7 +71,7 @@ class StatisticController extends Controller
                     'totalUser' => $totalUser,
                     'totalEmployee' => $totalEmployee,
                     'totalCustomer' => $totalCustomer,
-                    'totalUserVerifyYet' => $totalUserVerifyYet
+                    'totalUserVerify' => $totalUserVerify
                 ]
         ]);
 

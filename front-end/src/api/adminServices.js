@@ -91,3 +91,16 @@ export const getAllViolation = async ({ q = '' }) => {
         console.log(e);
     }
 };
+
+export const cancelOrder = async ({ censor_id, rental_id }) => {
+    try {
+        const res = await request.post('cancelOrder', {
+            censor_id,
+            rental_id,
+            status: 'Đã huỷ',
+        });
+        return res;
+    } catch (e) {
+        console.log(e);
+    }
+};

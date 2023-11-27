@@ -174,8 +174,8 @@ function Account() {
                 />
                 <Policy
                     icon={<FontAwesomeIcon icon={faUserAstronaut} />}
-                    name={'Sô tài khoản chưa xác thực'}
-                    value={dash?.totalUserVerifyYet}
+                    name={'Sô tài khoản đã xác thực'}
+                    value={dash?.totalUserVerify}
                 />
                 <Policy
                     icon={<FontAwesomeIcon icon={faUserTie} />}

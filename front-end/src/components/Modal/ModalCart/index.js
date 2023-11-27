@@ -61,7 +61,7 @@ function ModalCart() {
     const totalAmount = cartItems?.reduce((total, item) => {
         if (item.checked) {
             const totalItem = item.data_moto.reduce((total, item) => {
-                return total + item.price;
+                return total + parseFloat(item.price);
             }, 0);
             return total + totalItem;
         }
