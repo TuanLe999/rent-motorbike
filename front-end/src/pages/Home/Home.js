@@ -34,7 +34,7 @@ function Home() {
                     });
                     setTimeout(function () {
                         alert(
-                            'Link gitHub: https://github.com/Viet-Truong/rent-moto-ui'
+                            'Link gitHub: https://github.com/TuanLe999/rent-motorbike'
                         );
                     }, 10000);
                 });
