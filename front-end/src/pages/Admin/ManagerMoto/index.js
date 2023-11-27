@@ -234,7 +234,7 @@ function ManagerMoto() {
                                 </td>
                                 <td>
                                     <p className='fw-normal mb-1'>
-                                        {item.rent_cost}.000
+                                        {item.rent_cost}0
                                     </p>
                                 </td>
                                 <td>
